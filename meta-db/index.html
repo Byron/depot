@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://byron.github.io/dump/meta-db/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+        <title>Meta-Database - dump</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/prettify-1.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">dump</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gedanken <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li class="active">
+                            <a href="./">Meta-Database</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../license/">License</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                
+                <li >
+                    <a rel="next" href="..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../license/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/Byron/dump">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#meta-database-brainstorm">Meta Database Brainstorm</a></li>
+        
+            <li><a href="#goals">goals</a></li>
+        
+            <li><a href="#data-model">data model</a></li>
+        
+            <li><a href="#architecture">architecture</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h2 id="meta-database-brainstorm">Meta Database Brainstorm</h2>
+<h3 id="goals">goals</h3>
+<ul>
+<li>provide an API for using a data model. The latter is powerful enough to satisfy most storage needs, and can natively handle connections between things</li>
+<li>the data model can be represented in many programming languages</li>
+<li>maps data from any data source into its data model</li>
+<li>allows links between items from different data sources</li>
+<li>supports transactions when changing data within a single db at least ( its technically impossible for transactions to span multiple dbs )</li>
+<li>powerful event system allows various plugins to respond to change, which can in turn push it out over sockets.</li>
+<li>it is possible to connect to another instance of a similarly configured meta-database, and seamlessly access all the internal database it provides (proxying).</li>
+<li>each stored value is identifiable by some sort of URL. These can be resolved to quickly find the respective item.</li>
+<li>even though transactions should be part of the system, in-memory-only applications should have no trouble with it or much overhead.</li>
+</ul>
+<h3 id="data-model">data model</h3>
+<ul>
+<li>
+<p>nodes have properties, recursively. Properties can be connected. A connection is special kind of node, which may have properties (?)</p>
+</li>
+<li>
+<p>historical values (in separate DB). Learn from the past. Easy to make projects, estimates based on some algorithm.</p>
+</li>
+<li>streams should be supported, as such they can become available, to allow processors to continuously read the stream, and possibly write the adjusted result. How do streams work in a transactional system, after all streams can't work within such bounds.</li>
+</ul>
+<h3 id="architecture">architecture</h3>
+<ul>
+<li>in process lock bases multithreading is nogo</li>
+<li>offloading io to worker(s) possible, but working with async calls might be cumbersome, api might be cluttered</li>
+<li>simple gui thread,background thread model seems like minimum fit, gui should always be responsive </li>
+<li>changes are pushed to registered clients automatically, allowing them to update their view accordingly.</li>
+<li>zeromq seems intruiging as it would enforce a protocol that is quite language agnostic, while allowing multiple threads/processes/hosts to interact peacefully</li>
+<li>you can query the interface schema to pre-select attributes you are interested in querying/editing, by querying property meta-data</li>
+<li>copy-on-write semantics can be turned on on demand. This is useful for shared nodes, which should be unshared when they change in order to keep the entity using it stable. (e.g. a project is finished, and you want to be sure it stays as is even if shared entities are changing (like output formats)). The latter could also be done by having multiple versions of something around, and just freeze the version.</li>
+<li>multi-dimensional values, such as time-varying, locations, or locations in time.</li>
+<li>this is much like having a context, that value providers can use to adjust their computation, and which is shared among all value providers which are asked to compute.</li>
+<li>Overrides to the context should be possible, on global level, or per interface.</li>
+</ul>
+</div>
+        </div>
+
+        
+
+        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/prettify-1.0.min.js"></script>
+        <script src="../js/base.js"></script>
+    </body>
+</html>
