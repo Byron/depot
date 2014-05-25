@@ -1,0 +1,10 @@
+*.pyc
+*~
+*.sublime-workspace
+
+.coverage
+cover/
+
+/build/
+/pages/
+/doc/

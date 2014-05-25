@@ -1,0 +1,17 @@
+site_name: dump
+site_url: https://byron.github.io/dump
+site_description: 'All kinds of documents and configuration, related to any project'
+
+repo_url: https://github.com/Byron/dump
+dev_addr: 127.0.0.1:9990
+
+docs_dir: ../../src/md
+site_dir: ../../doc/mkdocs/html
+
+pages:
+- ['index.md', 'Home']
+- ['license.md', 'About', 'License']
+
+theme: yeti
+
+copyright: Copyright &copy; 2014, <a href="https://www.linkedin.com/in/sebastianthiel">Sebastian Thiel & Contributors</a>.
