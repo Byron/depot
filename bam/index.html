@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://byron.github.io/dump/meta-db/">
+        <link rel="canonical" href="https://byron.github.io/dump/bam/">
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-        <title>Meta-Database - dump</title>
+        <title>BAM - dump</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -60,12 +60,12 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gedanken <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
-                        <li class="active">
-                            <a href="./">Meta-Database</a>
+                        <li >
+                            <a href="../meta-db/">Meta-Database</a>
                         </li>
                     
-                        <li >
-                            <a href="../bam/">BAM</a>
+                        <li class="active">
+                            <a href="./">BAM</a>
                         </li>
                     
                     </ul>
@@ -91,12 +91,12 @@
             <ul class="nav navbar-nav navbar-right">
                 
                 <li >
-                    <a rel="next" href="..">
+                    <a rel="next" href="../meta-db/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../bam/">
+                    <a rel="prev" href="../license/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -119,54 +119,16 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#meta-database-brainstorm">Meta Database Brainstorm</a></li>
-        
-            <li><a href="#goals">goals</a></li>
-        
-            <li><a href="#data-model">data model</a></li>
-        
-            <li><a href="#architecture">architecture</a></li>
+        <li class="main active"><a href="#name-generators">Name Generators</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h2 id="meta-database-brainstorm">Meta Database Brainstorm</h2>
-<h3 id="goals">goals</h3>
+<h2 id="name-generators">Name Generators</h2>
 <ul>
-<li>provide an API for using a data model. The latter is powerful enough to satisfy most storage needs, and can natively handle connections between things</li>
-<li>the data model can be represented in many programming languages</li>
-<li>maps data from any data source into its data model</li>
-<li>allows links between items from different data sources</li>
-<li>supports transactions when changing data within a single db at least ( its technically impossible for transactions to span multiple dbs )</li>
-<li>powerful event system allows various plugins to respond to change, which can in turn push it out over sockets.</li>
-<li>it is possible to connect to another instance of a similarly configured meta-database, and seamlessly access all the internal database it provides (proxying).</li>
-<li>each stored value is identifiable by some sort of URL. These can be resolved to quickly find the respective item.</li>
-<li>even though transactions should be part of the system, in-memory-only applications should have no trouble with it or much overhead.</li>
-</ul>
-<h3 id="data-model">data model</h3>
-<ul>
-<li>
-<p>nodes have properties, recursively. Properties can be connected. A connection is special kind of node, which may have properties (?)</p>
-</li>
-<li>
-<p>historical values (in separate DB). Learn from the past. Easy to make projects, estimates based on some algorithm.</p>
-</li>
-<li>streams should be supported, as such they can become available, to allow processors to continuously read the stream, and possibly write the adjusted result. How do streams work in a transactional system, after all streams can't work within such bounds.</li>
-</ul>
-<h3 id="architecture">architecture</h3>
-<ul>
-<li>in process lock bases multithreading is nogo</li>
-<li>offloading io to worker(s) possible, but working with async calls might be cumbersome, api might be cluttered</li>
-<li>simple gui thread,background thread model seems like minimum fit, gui should always be responsive </li>
-<li>changes are pushed to registered clients automatically, allowing them to update their view accordingly.</li>
-<li>zeromq seems intruiging as it would enforce a protocol that is quite language agnostic, while allowing multiple threads/processes/hosts to interact peacefully</li>
-<li>you can query the interface schema to pre-select attributes you are interested in querying/editing, by querying property meta-data</li>
-<li>copy-on-write semantics can be turned on on demand. This is useful for shared nodes, which should be unshared when they change in order to keep the entity using it stable. (e.g. a project is finished, and you want to be sure it stays as is even if shared entities are changing (like output formats)). The latter could also be done by having multiple versions of something around, and just freeze the version.</li>
-<li>multi-dimensional values, such as time-varying, locations, or locations in time.</li>
-<li>this is much like having a context, that value providers can use to adjust their computation, and which is shared among all value providers which are asked to compute.</li>
-<li>Overrides to the context should be possible, on global level, or per interface.</li>
+<li>It must be possible to heavily delay folder creation, if so desired. Usually, you want certain structure to always be present, whereas other structure should only be created when someone is about to start working with it.</li>
 </ul>
 </div>
         </div>
