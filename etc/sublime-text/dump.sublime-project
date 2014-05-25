@@ -3,7 +3,12 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "/Users/byron/Documents/dev/dump"
+			"path": "../..",
+			"folder_exclude_patterns" : [
+				"pages",
+				".git",
+				"doc"
+			]
 		}
 	]
 }

@@ -11,6 +11,7 @@ site_dir: ../../doc/mkdocs/html
 pages:
 - ['index.md', 'Home']
 - ['meta-db.md', 'Gedanken', 'Meta-Database']
+- ['bam.md', 'Gedanken', 'BAM']
 - ['license.md', 'About', 'License']
 
 theme: yeti
