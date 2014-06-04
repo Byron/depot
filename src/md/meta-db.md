@@ -31,3 +31,5 @@
 * multi-dimensional values, such as time-varying, locations, or locations in time.
   + this is much like having a context, that value providers can use to adjust their computation, and which is shared among all value providers which are asked to compute.
   + Overrides to the context should be possible, on global level, or per interface.
+* Allow offline writes and schedule them according to their interdependencies
+    * consider complex creation and connection of items, creating dependencies that have to be adhered to when making the changes in an object database. For instance, it's not possible to create a connection to a object that doesn't yet exist, and it's not usually feasible to create each object individually as it provokes roundtrips. On the other hand, when keeping track in order or occurrence, things should be fine if grouped be operation as well (like create object, change value/connection)
