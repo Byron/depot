@@ -11,6 +11,8 @@
 * it is possible to connect to another instance of a similarly configured meta-database, and seamlessly access all the internal database it provides (proxying).
 * each stored value is identifiable by some sort of URL. These can be resolved to quickly find the respective item.
 * even though transactions should be part of the system, in-memory-only applications should have no trouble with it or much overhead.
+* constraints allow to specify that, for example, upon deletion of one entity, or disconnection of a particular property, the respective entity should be deleted automatically as well. This functionality is similar to what's available in SQL, which greatly helps to keep a model conistent automatically.
+    * Alternatively, or as a first step, one could consider implementing some sort of garbage collector, which determines which entities are stray and can be deleted for that reason.
 
 ### data model
 
@@ -33,3 +35,5 @@
   + Overrides to the context should be possible, on global level, or per interface.
 * Allow offline writes and schedule them according to their interdependencies
     * consider complex creation and connection of items, creating dependencies that have to be adhered to when making the changes in an object database. For instance, it's not possible to create a connection to a object that doesn't yet exist, and it's not usually feasible to create each object individually as it provokes roundtrips. On the other hand, when keeping track in order or occurrence, things should be fine if grouped be operation as well (like create object, change value/connection)
+* **A vital requirement** is the ability to make connections, but also to allow 'push' semantics to be added on top and after the fact. That way, value changes can propagate automatically like signal/slot mechanisms.
+    - solving this could either be done using transactions, maybe with delegates being in the mix. Possibly it's viable to add this functionality to per-session delegates, which get to process all value changes. For instance, pub/sub should be implemented that way too.
