@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://byron.github.io/dump/lang/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+        <title>Languages - dump</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/prettify-1.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">dump</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gedanken <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../meta-db/">Meta-Database</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../bam/">BAM</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Programming <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../python-coding/">Python Coding</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Languages</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../license/">License</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                
+                <li >
+                    <a rel="next" href="../python-coding/">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../license/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/Byron/dump">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#languages">Languages</a></li>
+        
+            <li><a href="#c">C++</a></li>
+        
+            <li><a href="#go">Go</a></li>
+        
+            <li><a href="#swift">Swift</a></li>
+        
+            <li><a href="#dart">Dart</a></li>
+        
+    
+        <li class="main "><a href="#comparison">Comparison</a></li>
+        
+            <li><a href="#language-features">Language Features</a></li>
+        
+            <li><a href="#tool-chain-features">Tool Chain Features</a></li>
+        
+    
+        <li class="main "><a href="#conclusion">Conclusion</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="languages">Languages</h1>
+<h2 id="c">C++</h2>
+<h3 id="pro">Pro</h3>
+<ul>
+<li><strong>type safety</strong></li>
+<li><strong>C++11</strong> adds many languages features that make it into a more useful language with nicer syntax for nowadays common language features.</li>
+</ul>
+<h3 id="con">Con</h3>
+<ul>
+<li><strong>tool-chain</strong><ul>
+<li>is not cross-platform at all and usually requires you to bring in additional tools, like <strong>cmake</strong>, to make cross-platform compilation bearable.</li>
+<li>It is complex with a steep learning curve</li>
+<li>Builds are generally slow, especially if templates are part of the game. Speeding up build times with precompiled headers is usually not too easy to implement, especially because these shouldn't ever go out of sync in case their headers change.</li>
+</ul>
+</li>
+<li><strong>memory-management</strong><ul>
+<li>There is an awful lot that can go wrong, and writing bullet-proof software is very difficult, requiring you to have mastered the language. Even then, bugs related to memory may sneak in easily.</li>
+<li>There are automated ways of doing this, but it's an optional feature depending on external libraries, standardized in no way.</li>
+</ul>
+</li>
+<li><strong>cross-platform support</strong><ul>
+<li>Is usually difficult to achieve, requiring a lot of expertise. Compiling on different platforms requires you to deal with entirely different tool-chains, and requires you to acquire builds of the libraries you depend on.</li>
+<li>Cross-platform compilation can be done, but is not practical</li>
+</ul>
+</li>
+<li><strong>unit-tests</strong><ul>
+<li>There is native support to write and run unit-tests, as well as to run benchmarks.</li>
+<li>Especially benchmark support is great to spot performance regression over time</li>
+</ul>
+</li>
+</ul>
+<h2 id="go">Go</h2>
+<h3 id="pro_1">Pro</h3>
+<ul>
+<li><strong>type safety</strong></li>
+<li><strong>tool-chain</strong><ul>
+<li>It comes with everything you need to build your go programs, providing facilities to download missing libraries.</li>
+<li>Builds are extremely fast.</li>
+<li>Comes with test-driver, profiler, and benchmarker and <em>documentation generator</em></li>
+</ul>
+</li>
+<li><strong>cross-platform support</strong><ul>
+<li>You can easily run a go source file, making it look more like an interpreted language.</li>
+<li>Thanks to a nice tool-chain, and a standard library that has cross-platform compatibility in mind, it's easy to support multiple platforms, even though your executable has to be recompiled.</li>
+<li>Cross-platform compilation is built-in, allowing you to produce binaries for all supported platform on a single system, i.e. build windows and linux binaries from OSX. This works as long as you don't use <code>cgo</code>, which by no means is commonly done.</li>
+</ul>
+</li>
+<li><strong>performance</strong><ul>
+<li>It can be as <a href="http://blog.golang.org/profiling-go-programs">fast as C</a>, but is easer to write</li>
+<li>Memory consumption can <a href="http://blog.golang.org/profiling-go-programs">be very close</a> to C</li>
+<li>Executable size is much larger than what C usually is, but it is self-contained, and still pretty decent (around 1MB to 2MB for small programs, which may have around 20KB using c/c++).<ul>
+<li>Build with <code>go build -ldflags="-s -w"</code> to reduce the executable size by about 1MB on OSX.</li>
+</ul>
+</li>
+<li>It feels rather low-level, which might make it suitable for cross-platform system-programming, or generally, high-performance programming</li>
+<li>Statically linked self-contained executables are ideal for distribution and startup performance.</li>
+</ul>
+</li>
+<li><strong>coding style</strong><ul>
+<li>It encourages a <a href="http://talks.golang.org/2013/bestpractices.slide">coding style</a> with very short variable names, which makes it harder to understand at first, yet produces rather bulk-free code after all. To me, it's a good thing, it's quite the opposite of what <code>swift</code> encourages as well.</li>
+</ul>
+</li>
+</ul>
+<h3 id="con_1">Con</h3>
+<ul>
+<li><strong>plugins</strong><ul>
+<li>There is no dynamic linking, like it's available in c/c++ for example.</li>
+<li>runtime extension can still work, but would require some form of IPC - goprotobuf and gozmq are available for this purpose. However, there is no pre-made system that could do it.</li>
+</ul>
+</li>
+<li><strong>generics</strong><ul>
+<li>There is no generic support, even though it might be added in the future. A proposed workaround is to use builtin arrays or maps with explicit unboxing.</li>
+</ul>
+</li>
+</ul>
+<h3 id="interesting">Interesting</h3>
+<ul>
+<li>Callable custom types seem to functions, which are declared as type. That way, you can attach methods to functions.</li>
+</ul>
+<h3 id="resources">Resources</h3>
+<ul>
+<li><a href="http://golang.org/doc/effective_go.html">Effective Go</a></li>
+<li><a href="http://golang.org/doc/faq">Go FAQ</a></li>
+</ul>
+<h2 id="swift">Swift</h2>
+<h3 id="pro_2">Pro</h3>
+<ul>
+<li>Good learning material (iBook, also in html version for free online)</li>
+<li>By default, everything is constant or immutable<ul>
+<li>A great design decision, which removes a class of common programming mistakes and opens up the code for plenty of optimizations.</li>
+<li>By default, methods may not modify their instance, and anything passed to a function is immutable, unless specified otherwise.</li>
+</ul>
+</li>
+</ul>
+<h3 id="con_2">Con</h3>
+<ul>
+<li>Currently only within OSX infrastructure. We will see when exactly there will be open-source implementations. After all, a language is just as useful as the libraries it can use, and currently, this seems to be whatever is available in the <code>objc</code> world</li>
+</ul>
+<h2 id="dart">Dart</h2>
+<h3 id="pro_3">Pro</h3>
+<ul>
+<li>Very nice documentation - so far, the best looking</li>
+</ul>
+<h1 id="comparison">Comparison</h1>
+<p>Please note that the following table will look correctly only with github flavored markdown.
+<a href="https://github.com/Byron/depot/blob/master/src/md/lang.md">Click here to view</a>.</p>
+<h2 id="language-features">Language Features</h2>
+<table>
+<thead>
+<tr>
+<th>Lang</th>
+<th>Type-Safety</th>
+<th>Generics</th>
+<th>Exceptions</th>
+<th>Garbage Collection</th>
+<th>MT-Support</th>
+<th>Closures</th>
+<th>Performance</th>
+<th>Plugins</th>
+<th>Reflection</th>
+<th>C Interop</th>
+<th>Const</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>python</td>
+<td>✘</td>
+<td>(✓)</td>
+<td>✓</td>
+<td>✓</td>
+<td>★☆☆</td>
+<td>✓</td>
+<td>★☆☆</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✘</td>
+<td></td>
+</tr>
+<tr>
+<td>cpp</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✘ (✓)</td>
+<td>★★☆</td>
+<td>✓</td>
+<td>★★★</td>
+<td>✓</td>
+<td>(✓)</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+<tr>
+<td>go</td>
+<td>✓</td>
+<td>✘</td>
+<td>✘</td>
+<td>✓</td>
+<td>★★★</td>
+<td>✓</td>
+<td>★★★</td>
+<td>✘</td>
+<td>✓</td>
+<td>(✓)</td>
+<td>❍</td>
+<td></td>
+</tr>
+<tr>
+<td>dart</td>
+<td>❍ (✓)</td>
+<td>❍</td>
+<td>❍</td>
+<td>✓</td>
+<td>❍</td>
+<td>✓</td>
+<td>★★☆</td>
+<td>✓</td>
+<td>❍</td>
+<td>❍</td>
+<td>❍</td>
+<td></td>
+</tr>
+<tr>
+<td>swift</td>
+<td>✓</td>
+<td>✓</td>
+<td>✘</td>
+<td>✓</td>
+<td>★★☆</td>
+<td>✓</td>
+<td>★★★</td>
+<td>❍</td>
+<td>(✓)</td>
+<td>✓</td>
+<td>✓</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="tool-chain-features">Tool Chain Features</h2>
+<table>
+<thead>
+<tr>
+<th>Lang</th>
+<th>CPU Profiler</th>
+<th>Memory Profiler</th>
+<th>CP Executables</th>
+<th>CP Compilation</th>
+<th>Debugger</th>
+<th>IDE</th>
+<th>Unit Testing</th>
+<th>YAML</th>
+<th>ZMQ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>python</td>
+<td>✓</td>
+<td>✘</td>
+<td>✓</td>
+<td>-</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>cpp</td>
+<td>✓</td>
+<td>✓</td>
+<td>✘</td>
+<td>✘</td>
+<td>✓</td>
+<td>✓</td>
+<td>(✓)</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>go</td>
+<td>✓</td>
+<td>✓</td>
+<td>✘</td>
+<td>✓</td>
+<td>✘</td>
+<td>(✓)</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>dart</td>
+<td>❍</td>
+<td>❍</td>
+<td>✓</td>
+<td>-</td>
+<td>❍</td>
+<td>✓</td>
+<td>❍</td>
+<td>✓</td>
+<td>✘</td>
+</tr>
+<tr>
+<td>swift</td>
+<td>✓</td>
+<td>✓</td>
+<td>✘</td>
+<td>✘</td>
+<td>✓</td>
+<td>✓</td>
+<td>❍</td>
+<td>✘</td>
+<td>✘</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p><strong>Legend</strong></p>
+<ul>
+<li>✘  : not supported</li>
+<li>✓  : supported</li>
+<li>
+<ul>
+<li>: doesn't apply</li>
+</ul>
+</li>
+<li>(✓): feature is not perfectly applicable or not natively supported, yet effectively supported, possibly through external libraries</li>
+<li>❍ (✘|✓) : not sure (with tendency to (not) supported)</li>
+<li>★☆ : rating - see feature list for more information</li>
+</ul>
+</li>
+<li>
+<p><strong>Features</strong></p>
+<ul>
+<li><em>Type Safety</em><ul>
+<li>Expected types in function signatures and for variables are explicitly defined and/or matter. This allows for compile-time checking of types to assure they are used correctly.</li>
+<li>Opens up your code for static code analysis, and will help your IDE to auto-complete and hint, generally boosting comfort and convenience, easing the learning curve.</li>
+<li>If this is not the case, everything is determined at runtime, adding an entire class of possible errors, as common in python, javascript and ruby for example.</li>
+<li>On the other hand, code written in languages which are not type-safe is less verbose and thus faster to write in theory. In practice, type information should be provided if others should be able to use your API.</li>
+</ul>
+</li>
+<li><em>Generics</em><ul>
+<li>Allows to write types and algorithms which can work with any type that provides certain capabilities. The actual type is generated based on which type the generic should specialize in. It's as efficient as if it would have been implemented by hand, but adds cost to the compile time of the program.</li>
+<li>A very effective mean to prevent code duplication, or to be forced to add code-generators into the tool chain.</li>
+</ul>
+</li>
+<li><em>Exceptions</em><ul>
+<li>Provide an alternate return path for functions, effectively allowing clients of your API to know that they will get a valid return value, or none at all.</li>
+<li>Effectively, those who don't care about exceptions don't handle them, and can write code which doesn't check for the validity of return values.</li>
+<li>Those who are handling exceptions, will have to write more verbose code compared to a simple <code>if</code> clause.</li>
+<li>Exceptions are sometimes disputed, and even though I use them extensively, they do add complexity to your API as people have to know which exceptions can be thrown, if any, and what return values can be - after all, some functions do return <code>nil</code>, <code>None</code> or <code>0</code> to indicate an error condition.</li>
+</ul>
+</li>
+<li><em>Garbage Collection</em><ul>
+<li>The term is used to indicate that memory management is automated. This means, you will never have to deal with memory as a resources, with acquiring or releasing it, which removes an entire class of programming errors.</li>
+<li>It also makes leakage through cyclic links easy, which requires the programmer to at least be aware of how it works.</li>
+</ul>
+</li>
+<li><em>MT-Support</em><ul>
+<li>Multi-threading support</li>
+<li>★☆☆<ul>
+<li>Native threads - threads that actually run concurrently, as orchestrated by the operating system kernel</li>
+</ul>
+</li>
+<li>★★☆<ul>
+<li>Concurrent Code - code can run concurrently, as it's not blocked by (automatic) mutexes. This is the case in some interpreted languages, and hampers the usefulness and performance gains of multiple threads.</li>
+</ul>
+</li>
+<li>★★★<ul>
+<li>Built-in concurrency primitives - the language is built for running concurrently, and makes it easy to use through built-in language features.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>Closures</em><ul>
+<li>See <a href="http://en.wikipedia.org/wiki/Closure_(computer_programming)">wiki</a></li>
+<li>All programming languages support some form of closure, even though C++ doesn't natively support binding of surrounding data. This functionality can be added through boost, but comes with complex syntax and at the expense of templates. C11 does have <a href="http://www.cprogramming.com/c++11/c++11-lambda-closures.html">native closure support</a>.</li>
+</ul>
+</li>
+<li><em>Performance</em><ul>
+<li>Describes the overall CPU performance and memory efficiency of the language</li>
+<li>★☆☆<ul>
+<li>Slow (interpreted) execution without JIT, high memory overhead as everything is an object, without any optimizations. Startup performance of interpreted programs is high as it involves a lot of IO, e.g. reading of various files. Examples are <code>python</code> and <code>ruby</code></li>
+</ul>
+</li>
+<li>★★☆<ul>
+<li>Fast possibly interpreted execution, usually achieving close-to-C performance using a JIT in certain regions of the code. Memory overhead is still high, and startup times are high due to interpreter overhead. Examples are <code>javascript</code>, <code>dart</code> and <code>java</code></li>
+</ul>
+</li>
+<li>★★★<ul>
+<li>Optimized, platform dependent machine code which runs as fast as C, memory overhead is low and close to what a good C program can accomplish. Startup time of the executable is low as it can be executed directly.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>Plugins</em><ul>
+<li>A programs ability to load additional code at runtime without modifying the original executable. This code is called a plugin, and usually provided as binary (c++, python byte code) or text file (interpreted languages).</li>
+</ul>
+</li>
+<li><em>Reflection</em><ul>
+<li>Allows a program to examine the type of otherwise unknown objects.</li>
+<li>(✓) indicates that this runtime type information only includes type information, but not the methods and attributes of that type.</li>
+</ul>
+</li>
+<li><em>C Interop</em><ul>
+<li>Allows the language to be extended using C or C++ programs, and to make calls to C/C++ libraries. This is somewhat important in case performance is a premise.</li>
+<li>(y) means that there are restrictions, and that only C/C++ calls can be done (so there is no C-extension possible).</li>
+</ul>
+</li>
+<li></li>
+<li><em>CP Executables</em><ul>
+<li>Cross-platform executables per se don't exist, which is why something similar to cross-platform executables only works for interpreted, byte-compiled languages. Those are python, ruby, javascript, and java for example.</li>
+<li>Everything else is compiled to machine-code, and as such depends heavily on the platform it was compiled on.</li>
+</ul>
+</li>
+<li><em>CP Compilation</em><ul>
+<li>Cross-platform compilation allows to generate executables for multiple platforms, on a single source platform.</li>
+<li>Interpreted languages, like python, java, ruby, support this natively, even though they might depend on a certain interpreter version to run. One byte-code file will natively run on multiple platforms that way.</li>
+</ul>
+</li>
+<li><em>CPU Profiler</em><ul>
+<li>A program to trace how much time is spend in a function, with support for reporting and possibly visualization</li>
+</ul>
+</li>
+<li><em>Memory Profiler</em><ul>
+<li>A tool to track memory allocation and deallocations, per function, and to detect leakage</li>
+</ul>
+</li>
+<li><em>Debugger</em><ul>
+<li>A standard tool to break execution of a program, allowing to introspect all of its state and call stack.</li>
+</ul>
+</li>
+<li><em>IDE</em><ul>
+<li>An integrated development environment, may come in the form of a custom program, extensions to editors like sublime text, vim or emacs.</li>
+</ul>
+</li>
+<li>Unittesting<ul>
+<li>Facilities to declare test cases and run them, displaying the result in a fashion helping to debug the problem.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="conclusion">Conclusion</h1>
+</div>
+        </div>
+
+        
+
+        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/prettify-1.0.min.js"></script>
+        <script src="../js/base.js"></script>
+    </body>
+</html>

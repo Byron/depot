@@ -74,6 +74,23 @@
             
             
                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Programming <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../python-coding/">Python Coding</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../lang/">Languages</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
@@ -127,6 +144,8 @@
         
             <li><a href="#architecture">architecture</a></li>
         
+            <li><a href="#questions">Questions</a></li>
+        
     
     </ul>
 </div></div>
@@ -144,6 +163,10 @@
 <li>it is possible to connect to another instance of a similarly configured meta-database, and seamlessly access all the internal database it provides (proxying).</li>
 <li>each stored value is identifiable by some sort of URL. These can be resolved to quickly find the respective item.</li>
 <li>even though transactions should be part of the system, in-memory-only applications should have no trouble with it or much overhead.</li>
+<li>constraints allow to specify that, for example, upon deletion of one entity, or disconnection of a particular property, the respective entity should be deleted automatically as well. This functionality is similar to what's available in SQL, which greatly helps to keep a model conistent automatically.<ul>
+<li>Alternatively, or as a first step, one could consider implementing some sort of garbage collector, which determines which entities are stray and can be deleted for that reason.</li>
+</ul>
+</li>
 </ul>
 <h3 id="data-model">data model</h3>
 <ul>
@@ -167,6 +190,21 @@
 <li>multi-dimensional values, such as time-varying, locations, or locations in time.</li>
 <li>this is much like having a context, that value providers can use to adjust their computation, and which is shared among all value providers which are asked to compute.</li>
 <li>Overrides to the context should be possible, on global level, or per interface.</li>
+<li>Allow offline writes and schedule them according to their interdependencies<ul>
+<li>consider complex creation and connection of items, creating dependencies that have to be adhered to when making the changes in an object database. For instance, it's not possible to create a connection to a object that doesn't yet exist, and it's not usually feasible to create each object individually as it provokes roundtrips. On the other hand, when keeping track in order or occurrence, things should be fine if grouped be operation as well (like create object, change value/connection)</li>
+</ul>
+</li>
+<li><strong>A vital requirement</strong> is the ability to make connections, but also to allow 'push' semantics to be added on top and after the fact. That way, value changes can propagate automatically like signal/slot mechanisms.<ul>
+<li>solving this could either be done using transactions, maybe with delegates being in the mix. Possibly it's viable to add this functionality to per-session delegates, which get to process all value changes. For instance, pub/sub should be implemented that way too.</li>
+</ul>
+</li>
+<li>anything is identifieable through a URL, e.g. entities instances as well as properties on particular instances. Entity Session Managers (those who make a root entity available) can be access through urls as well. This must play nicely with URLs of existing REST based web applications, as these must be usable verbatim.</li>
+</ul>
+<h3 id="questions">Questions</h3>
+<ul>
+<li>Could protocol buffers as general purpose definition language be suitable to make the schema cross-platform ? After all, we want to send data around all the time, in-process, inter-process, and across machines at some point.</li>
+<li>What about web-friendlyness ? RPC via json/http friendly protocols might be something nice to have, or at least should be relatively easy to implement.</li>
+<li>Can can <a href="http://camlistore.org">camlistore</a> be useful ? It's written in go, and could make a nice database backend. In the end, it would be just a backend.</li>
 </ul>
 </div>
         </div>
