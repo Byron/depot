@@ -12,7 +12,8 @@ pages:
 - ['index.md', 'Home']
 - ['meta-db.md', 'Gedanken', 'Meta-Database']
 - ['bam.md', 'Gedanken', 'BAM']
-- ['python-coding.md', 'General', 'Python Coding']
+- ['python-coding.md', 'Programming', 'Python Coding']
+- ['lang.md', 'Programming', 'Languages']
 - ['license.md', 'About', 'License']
 
 theme: yeti

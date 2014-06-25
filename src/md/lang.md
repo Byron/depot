@@ -1,0 +1,181 @@
+# Languages
+
+## C++
+
+### Pro
+* **type safety**
+* **C++11** adds many languages features that make it into a more useful language with nicer syntax for nowadays common language features.
+
+### Con
+* **tool-chain**
+    * is not cross-platform at all and usually requires you to bring in additional tools, like **cmake**, to make cross-platform compilation bearable.
+    * It is complex with a steep learning curve
+    * Builds are generally slow, especially if templates are part of the game. Speeding up build times with precompiled headers is usually not too easy to implement, especially because these shouldn't ever go out of sync in case their headers change.
+* **memory-management**
+    * There is an awful lot that can go wrong, and writing bullet-proof software is very difficult, requiring you to have mastered the language. Even then, bugs related to memory may sneak in easily.
+    * There are automated ways of doing this, but it's an optional feature depending on external libraries, standardized in no way.
+* **cross-platform support**
+    * Is usually difficult to achieve, requiring a lot of expertise. Compiling on different platforms requires you to deal with entirely different tool-chains, and requires you to acquire builds of the libraries you depend on.
+    * Cross-platform compilation can be done, but is not practical
+* **unit-tests**
+    * There is native support to write and run unit-tests, as well as to run benchmarks.
+    * Especially benchmark support is great to spot performance regression over time
+
+## Go
+
+### Pro
+* **type safety**
+* **tool-chain**
+    * It comes with everything you need to build your go programs, providing facilities to download missing libraries.
+    * Builds are extremely fast.
+    * Comes with test-driver, profiler, and benchmarker and *documentation generator*
+* **cross-platform support**
+    * You can easily run a go source file, making it look more like an interpreted language.
+    * Thanks to a nice tool-chain, and a standard library that has cross-platform compatibility in mind, it's easy to support multiple platforms, even though your executable has to be recompiled.
+    * Cross-platform compilation is built-in, allowing you to produce binaries for all supported platform on a single system, i.e. build windows and linux binaries from OSX. This works as long as you don't use `cgo`, which by no means is commonly done.
+* **performance**
+    * It can be as [fast as C](http://blog.golang.org/profiling-go-programs), but is easer to write
+    * Memory consumption can [be very close](http://blog.golang.org/profiling-go-programs) to C
+    * Executable size is much larger than what C usually is, but it is self-contained, and still pretty decent (around 1MB to 2MB for small programs, which may have around 20KB using c/c++).
+        * Build with `go build -ldflags="-s -w"` to reduce the executable size by about 1MB on OSX.
+    * It feels rather low-level, which might make it suitable for cross-platform system-programming, or generally, high-performance programming
+    * Statically linked self-contained executables are ideal for distribution and startup performance.
+* **coding style**
+    * It encourages a [coding style](http://talks.golang.org/2013/bestpractices.slide) with very short variable names, which makes it harder to understand at first, yet produces rather bulk-free code after all. To me, it's a good thing, it's quite the opposite of what `swift` encourages as well.
+
+### Con
+
+* **plugins**
+    * There is no dynamic linking, like it's available in c/c++ for example.
+    * runtime extension can still work, but would require some form of IPC - goprotobuf and gozmq are available for this purpose. However, there is no pre-made system that could do it.
+* **generics**
+    * There is no generic support, even though it might be added in the future. A proposed workaround is to use builtin arrays or maps with explicit unboxing.
+
+### Interesting
+* Callable custom types seem to functions, which are declared as type. That way, you can attach methods to functions.
+
+
+### Resources
+
+* [Effective Go](http://golang.org/doc/effective_go.html)
+* [Go FAQ](http://golang.org/doc/faq)
+
+
+## Swift
+
+### Pro
+* Good learning material (iBook, also in html version for free online)
+* By default, everything is constant or immutable
+    * A great design decision, which removes a class of common programming mistakes and opens up the code for plenty of optimizations.
+    * By default, methods may not modify their instance, and anything passed to a function is immutable, unless specified otherwise.
+
+### Con
+
+* Currently only within OSX infrastructure. We will see when exactly there will be open-source implementations. After all, a language is just as useful as the libraries it can use, and currently, this seems to be whatever is available in the `objc` world
+
+
+## Dart
+
+
+### Pro
+
+* Very nice documentation - so far, the best looking
+
+
+# Comparison
+
+Please note that the following table will look correctly only with github flavored markdown.
+[Click here to view](https://github.com/Byron/depot/blob/master/src/md/lang.md).
+
+## Language Features
+
+Lang         | Type-Safety | Generics | Exceptions | Garbage Collection | MT-Support | Closures | Performance | Plugins | Reflection | C Interop | Const |
+------------ | ----------- | -------- | ---------- | ------------------ | ---------- | -------- | ----------- | ------- | ---------- | --------- | ----- |
+python       | ✘           | (✓)      | ✓          | ✓                  | ★☆☆        |  ✓       | ★☆☆         | ✓       |  ✓         |  ✓        | ✘     |
+cpp          | ✓           |  ✓       | ✓          | ✘ (✓)              | ★★☆        |  ✓       | ★★★         | ✓       | (✓)        |  ✓        | ✓     |
+go           | ✓           |  ✘       | ✘          | ✓                  | ★★★        |  ✓       | ★★★         | ✘       |  ✓         | (✓)       | ❍     |
+dart         | ❍ (✓)       |  ❍       | ❍          | ✓                  | ❍          |  ✓       | ★★☆         | ✓       |  ❍         |  ❍        | ❍     |
+swift        | ✓           |  ✓       | ✘          | ✓                  | ★★☆        |  ✓       | ★★★         | ❍       | (✓)        |  ✓        | ✓     |
+
+
+## Tool Chain Features
+
+Lang         | CPU Profiler | Memory Profiler | CP Executables | CP Compilation | Debugger | IDE | Unit Testing | YAML|ZMQ|QT |
+------------ | ------------ | --------------- | -------------- | -------------- | -------- | --- | ------------ | ----------- |
+python       | ✓            | ✘               | ✓              | -              | ✓        |  ✓  |  ✓           | ✓ | ✓ | ✓   |
+cpp          | ✓            | ✓               | ✘              | ✘              | ✓        |  ✓  | (✓)          | ✓ | ✓ | ✓   |
+go           | ✓            | ✓               | ✘              | ✓              | ✘        | (✓) |  ✓           | ✓ | ✓ | ✘   |
+dart         | ❍            | ❍               | ✓              | -              | ❍        |  ✓  |  ❍           | ✓ | ✘ | ✘   |
+swift        | ✓            | ✓               | ✘              | ✘              | ✓        |  ✓  |  ❍           | ✘ | ✘ | ✘   |
+
+* **Legend**
+    * ✘  : not supported
+    * ✓  : supported
+    * -  : doesn't apply
+    * (✓): feature is not perfectly applicable or not natively supported, yet effectively supported, possibly through external libraries
+    * ❍ (✘|✓) : not sure (with tendency to (not) supported)
+    * ★☆ : rating - see feature list for more information
+
+* **Features**
+    * *Type Safety*
+        * Expected types in function signatures and for variables are explicitly defined and/or matter. This allows for compile-time checking of types to assure they are used correctly.
+        * Opens up your code for static code analysis, and will help your IDE to auto-complete and hint, generally boosting comfort and convenience, easing the learning curve.
+        * If this is not the case, everything is determined at runtime, adding an entire class of possible errors, as common in python, javascript and ruby for example.
+        * On the other hand, code written in languages which are not type-safe is less verbose and thus faster to write in theory. In practice, type information should be provided if others should be able to use your API.
+    * *Generics*
+        * Allows to write types and algorithms which can work with any type that provides certain capabilities. The actual type is generated based on which type the generic should specialize in. It's as efficient as if it would have been implemented by hand, but adds cost to the compile time of the program.
+        * A very effective mean to prevent code duplication, or to be forced to add code-generators into the tool chain.
+    * *Exceptions*
+        * Provide an alternate return path for functions, effectively allowing clients of your API to know that they will get a valid return value, or none at all.
+        * Effectively, those who don't care about exceptions don't handle them, and can write code which doesn't check for the validity of return values.
+        * Those who are handling exceptions, will have to write more verbose code compared to a simple `if` clause.
+        * Exceptions are sometimes disputed, and even though I use them extensively, they do add complexity to your API as people have to know which exceptions can be thrown, if any, and what return values can be - after all, some functions do return `nil`, `None` or `0` to indicate an error condition.
+    * *Garbage Collection*
+        * The term is used to indicate that memory management is automated. This means, you will never have to deal with memory as a resources, with acquiring or releasing it, which removes an entire class of programming errors.
+        * It also makes leakage through cyclic links easy, which requires the programmer to at least be aware of how it works.
+    * *MT-Support*
+        * Multi-threading support
+        * ★☆☆
+            * Native threads - threads that actually run concurrently, as orchestrated by the operating system kernel
+        * ★★☆
+            * Concurrent Code - code can run concurrently, as it's not blocked by (automatic) mutexes. This is the case in some interpreted languages, and hampers the usefulness and performance gains of multiple threads.
+        * ★★★
+            * Built-in concurrency primitives - the language is built for running concurrently, and makes it easy to use through built-in language features.
+    * *Closures*
+        * See [wiki](http://en.wikipedia.org/wiki/Closure_(computer_programming))
+        * All programming languages support some form of closure, even though C++ doesn't natively support binding of surrounding data. This functionality can be added through boost, but comes with complex syntax and at the expense of templates. C11 does have [native closure support](http://www.cprogramming.com/c++11/c++11-lambda-closures.html).
+    * *Performance*
+        * Describes the overall CPU performance and memory efficiency of the language
+        * ★☆☆
+            * Slow (interpreted) execution without JIT, high memory overhead as everything is an object, without any optimizations. Startup performance of interpreted programs is high as it involves a lot of IO, e.g. reading of various files. Examples are `python` and `ruby`
+        * ★★☆
+            * Fast possibly interpreted execution, usually achieving close-to-C performance using a JIT in certain regions of the code. Memory overhead is still high, and startup times are high due to interpreter overhead. Examples are `javascript`, `dart` and `java`
+        * ★★★
+            * Optimized, platform dependent machine code which runs as fast as C, memory overhead is low and close to what a good C program can accomplish. Startup time of the executable is low as it can be executed directly.
+    * *Plugins*
+        * A programs ability to load additional code at runtime without modifying the original executable. This code is called a plugin, and usually provided as binary (c++, python byte code) or text file (interpreted languages).
+    * *Reflection*
+        * Allows a program to examine the type of otherwise unknown objects.
+        * (✓) indicates that this runtime type information only includes type information, but not the methods and attributes of that type.
+    * *C Interop*
+        * Allows the language to be extended using C or C++ programs, and to make calls to C/C++ libraries. This is somewhat important in case performance is a premise.
+        * (y) means that there are restrictions, and that only C/C++ calls can be done (so there is no C-extension possible).
+    * 
+    * *CP Executables*
+        * Cross-platform executables per se don't exist, which is why something similar to cross-platform executables only works for interpreted, byte-compiled languages. Those are python, ruby, javascript, and java for example.
+        * Everything else is compiled to machine-code, and as such depends heavily on the platform it was compiled on.
+    * *CP Compilation*
+        * Cross-platform compilation allows to generate executables for multiple platforms, on a single source platform.
+        * Interpreted languages, like python, java, ruby, support this natively, even though they might depend on a certain interpreter version to run. One byte-code file will natively run on multiple platforms that way.
+    * *CPU Profiler*
+        * A program to trace how much time is spend in a function, with support for reporting and possibly visualization
+    * *Memory Profiler*
+        * A tool to track memory allocation and deallocations, per function, and to detect leakage
+    * *Debugger*
+        * A standard tool to break execution of a program, allowing to introspect all of its state and call stack.
+    * *IDE*
+        * An integrated development environment, may come in the form of a custom program, extensions to editors like sublime text, vim or emacs.
+    * Unittesting
+        * Facilities to declare test cases and run them, displaying the result in a fashion helping to debug the problem.
+
+# Conclusion

@@ -37,3 +37,10 @@
     * consider complex creation and connection of items, creating dependencies that have to be adhered to when making the changes in an object database. For instance, it's not possible to create a connection to a object that doesn't yet exist, and it's not usually feasible to create each object individually as it provokes roundtrips. On the other hand, when keeping track in order or occurrence, things should be fine if grouped be operation as well (like create object, change value/connection)
 * **A vital requirement** is the ability to make connections, but also to allow 'push' semantics to be added on top and after the fact. That way, value changes can propagate automatically like signal/slot mechanisms.
     - solving this could either be done using transactions, maybe with delegates being in the mix. Possibly it's viable to add this functionality to per-session delegates, which get to process all value changes. For instance, pub/sub should be implemented that way too.
+* anything is identifieable through a URL, e.g. entities instances as well as properties on particular instances. Entity Session Managers (those who make a root entity available) can be access through urls as well. This must play nicely with URLs of existing REST based web applications, as these must be usable verbatim.
+
+### Questions
+
+* Could protocol buffers as general purpose definition language be suitable to make the schema cross-platform ? After all, we want to send data around all the time, in-process, inter-process, and across machines at some point.
+* What about web-friendlyness ? RPC via json/http friendly protocols might be something nice to have, or at least should be relatively easy to implement.
+* Can can [camlistore](http://camlistore.org) be useful ? It's written in go, and could make a nice database backend. In the end, it would be just a backend.
