@@ -29,6 +29,7 @@
     * It comes with everything you need to build your go programs, providing facilities to download missing libraries.
     * Builds are extremely fast.
     * Comes with test-driver, profiler, and benchmarker and *documentation generator*
+    * Can check for race conditions, which requires your program to run. This in turn, makes good test-cases as necessary as ever.
 * **cross-platform support**
     * You can easily run a go source file, making it look more like an interpreted language.
     * Thanks to a nice tool-chain, and a standard library that has cross-platform compatibility in mind, it's easy to support multiple platforms, even though your executable has to be recompiled.
@@ -40,6 +41,7 @@
         * Build with `go build -ldflags="-s -w"` to reduce the executable size by about 1MB on OSX.
     * It feels rather low-level, which might make it suitable for cross-platform system-programming, or generally, high-performance programming
     * Statically linked self-contained executables are ideal for distribution and startup performance.
+    * Has **fast** [regexp](http://swtch.com/~rsc/regexp/regexp1.html)
 * **coding style**
     * It encourages a [coding style](http://talks.golang.org/2013/bestpractices.slide) with very short variable names, which makes it harder to understand at first, yet produces rather bulk-free code after all. To me, it's a good thing, it's quite the opposite of what `swift` encourages as well.
 
@@ -50,6 +52,10 @@
     * runtime extension can still work, but would require some form of IPC - goprotobuf and gozmq are available for this purpose. However, there is no pre-made system that could do it.
 * **generics**
     * There is no generic support, even though it might be added in the future. A proposed workaround is to use builtin arrays or maps with explicit unboxing.
+* **cli libraries**
+    * there seems to be no library which can automatically generate a help-text, as arg-parse does it. This is sad, as standalone commandline tools should have been the prime application for go in my thinking.
+        + however, even subcommands can be implemented using it, even though you have to work more for it.
+    * Community libraries I tried were highly immature ([optparse-go](https://code.google.com/p/optparse-go), opts-go)
 
 ### Interesting
 * Callable custom types seem to functions, which are declared as type. That way, you can attach methods to functions.
@@ -73,6 +79,10 @@
 
 * Currently only within OSX infrastructure. We will see when exactly there will be open-source implementations. After all, a language is just as useful as the libraries it can use, and currently, this seems to be whatever is available in the `objc` world
 
+### Notes
+
+* So far, the nicest language I have seen, easy to learn, save and fast. Unfortunately, it is a bit too early to use it for anything but OSX/IOS development.
+
 
 ## Dart
 
@@ -89,13 +99,13 @@ Please note that the following table will look correctly only with github flavor
 
 ## Language Features
 
-Lang         | Type-Safety | Generics | Exceptions | Garbage Collection | MT-Support | Closures | Performance | Plugins | Reflection | C Interop | Const |
------------- | ----------- | -------- | ---------- | ------------------ | ---------- | -------- | ----------- | ------- | ---------- | --------- | ----- |
-python       | ✘           | (✓)      | ✓          | ✓                  | ★☆☆        |  ✓       | ★☆☆         | ✓       |  ✓         |  ✓        | ✘     |
-cpp          | ✓           |  ✓       | ✓          | ✘ (✓)              | ★★☆        |  ✓       | ★★★         | ✓       | (✓)        |  ✓        | ✓     |
-go           | ✓           |  ✘       | ✘          | ✓                  | ★★★        |  ✓       | ★★★         | ✘       |  ✓         | (✓)       | ❍     |
-dart         | ❍ (✓)       |  ❍       | ❍          | ✓                  | ❍          |  ✓       | ★★☆         | ✓       |  ❍         |  ❍        | ❍     |
-swift        | ✓           |  ✓       | ✘          | ✓                  | ★★☆        |  ✓       | ★★★         | ❍       | (✓)        |  ✓        | ✓     |
+Lang         | Type-Safety | Generics | Exceptions | Garbage Collection | MT-Support | Closures | Performance | Plugins | Reflection | C Interop | Const | Destructor |
+------------ | ----------- | -------- | ---------- | ------------------ | ---------- | -------- | ----------- | ------- | ---------- | --------- | ----- | ---------- |
+python       | ✘           | (✓)      | ✓          | ✓                  | ★☆☆        |  ✓       | ★☆☆         | ✓       |  ✓         |  ✓        | ✘     | ✓          |
+cpp          | ✓           |  ✓       | ✓          | ✘ (✓)              | ★★☆        |  ✓       | ★★★         | ✓       | (✓)        |  ✓        | ✓     | ✓          |
+go           | ✓           |  ✘       | ✘          | ✓                  | ★★★        |  ✓       | ★★★         | ✘       |  ✓         | (✓)       | ❍     | ✘          |
+dart         | ❍ (✓)       |  ❍       | ❍          | ✓                  | ❍          |  ✓       | ★★☆         | ✓       |  ❍         |  ❍        | ❍     | ❍          |
+swift        | ✓           |  ✓       | ✘          | ✓                  | ★★☆        |  ✓       | ★★★         | ❍       | (✓)        |  ✓        | ✓     | ✓          |
 
 
 ## Tool Chain Features
@@ -160,7 +170,11 @@ swift        | ✓            | ✓               | ✘              | ✘      
     * *C Interop*
         * Allows the language to be extended using C or C++ programs, and to make calls to C/C++ libraries. This is somewhat important in case performance is a premise.
         * (y) means that there are restrictions, and that only C/C++ calls can be done (so there is no C-extension possible).
-    * 
+    * *Const*
+        * A language that allows to specify instances as constant, which effectively makes them read-only, in one way or another.
+        * This feature helps to prevent plenty of programming errors, and makes programs safer.
+    * ** *Destructor**
+        * Allows for an instance to execute some clean-up code when no one is referencing it anymore. Useful for assured cleanup.
     * *CP Executables*
         * Cross-platform executables per se don't exist, which is why something similar to cross-platform executables only works for interpreted, byte-compiled languages. Those are python, ruby, javascript, and java for example.
         * Everything else is compiled to machine-code, and as such depends heavily on the platform it was compiled on.
@@ -175,7 +189,7 @@ swift        | ✓            | ✓               | ✘              | ✘      
         * A standard tool to break execution of a program, allowing to introspect all of its state and call stack.
     * *IDE*
         * An integrated development environment, may come in the form of a custom program, extensions to editors like sublime text, vim or emacs.
-    * Unittesting
+    * *Unittesting*
         * Facilities to declare test cases and run them, displaying the result in a fashion helping to debug the problem.
 
 # Conclusion

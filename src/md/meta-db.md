@@ -13,6 +13,11 @@
 * even though transactions should be part of the system, in-memory-only applications should have no trouble with it or much overhead.
 * constraints allow to specify that, for example, upon deletion of one entity, or disconnection of a particular property, the respective entity should be deleted automatically as well. This functionality is similar to what's available in SQL, which greatly helps to keep a model conistent automatically.
     * Alternatively, or as a first step, one could consider implementing some sort of garbage collector, which determines which entities are stray and can be deleted for that reason.
+* It should be easy to attach a time-variant data store which tracks all values a particular attribute has seen over time. The storage can be a storage different from the one keeping the actual value
+    + It looks like a node has properties has meta-properties, where properties are meta-data of a node, meta-properties are meta-data on properties.
+    + Code can be attached to sets of meta-properties in the form of ... interfaces ?
+* Allow dependency dirty tracking. Therefore, when writes are done, delegates should be able to hook in to the pending transaction, and for example analyse dependencies in the graph and set downstream properties dirty. This kind of dirty-tracking would also require meta-properties to be added easily.
+* Data providers can be offline, which renders all links into their data stale. This should be handled nicely by the code working on it, without being forced to check everything all the time, ideally.
 
 ### data model
 
@@ -29,6 +34,7 @@
 * changes are pushed to registered clients automatically, allowing them to update their view accordingly.
 * zeromq seems intruiging as it would enforce a protocol that is quite language agnostic, while allowing multiple threads/processes/hosts to interact peacefully
 * you can query the interface schema to pre-select attributes you are interested in querying/editing, by querying property meta-data
+* Allow to delay-load data, selectively. It should be easy to embed blobs like images, but load them on demand only. It should be possible for GUIs to interact with it neatly (showing progress bars, or other means to indicate plain asynchronous operation)
 * copy-on-write semantics can be turned on on demand. This is useful for shared nodes, which should be unshared when they change in order to keep the entity using it stable. (e.g. a project is finished, and you want to be sure it stays as is even if shared entities are changing (like output formats)). The latter could also be done by having multiple versions of something around, and just freeze the version.
 * multi-dimensional values, such as time-varying, locations, or locations in time.
   + this is much like having a context, that value providers can use to adjust their computation, and which is shared among all value providers which are asked to compute.
