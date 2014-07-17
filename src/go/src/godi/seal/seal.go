@@ -91,7 +91,7 @@ func (s *SealCommand) Generate(done <-chan bool) (<-chan godi.FileInfo, <-chan g
 				break
 			}
 		}
-		defer func() { close(files); close(results) }()
+		defer close(files)
 	}()
 
 	return files, results
@@ -148,16 +148,20 @@ func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Res
 		fd, *err = os.Open(f.Path)
 		defer fd.Close()
 
-		if err != nil {
+		if *err != nil {
 			return
 		}
 
 		sha1gen.Reset()
 		var written int64
 		written, *err = io.Copy(sha1gen, fd)
+		if *err != nil {
+			return
+		}
 		f.Sha1 = sha1gen.Sum(nil)
 		if written != f.Size {
 			*err = fmt.Errorf("Filesize of '%s' reported as %d, yet only %d bytes were hashed", f.Path, f.Size, written)
+			return
 		}
 	}
 
@@ -173,6 +177,24 @@ func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Res
 
 func (s *SealCommand) Accumulate(results <-chan godi.Result) <-chan godi.Result {
 	accumResult := make(chan godi.Result)
-	defer close(accumResult)
+
+	go func() {
+		defer close(accumResult)
+
+		var count uint = 0
+		var errCount uint = 0
+		for r := range results {
+			if r.Error() != nil {
+				errCount += 1
+				accumResult <- r
+			}
+			// DEBUG
+			count += 1
+			sr := r.(*SealResult)
+			fmt.Fprintf(os.Stderr, "%s: %x\n", sr.finfo.Path, sr.finfo.Sha1)
+		}
+		accumResult <- &SealResult{nil, fmt.Sprintf("Accumulated %d files (%d errors)", count, errCount), nil}
+	}()
+
 	return accumResult
 }

@@ -32,7 +32,7 @@ type Runner interface {
 	// Launches a go-routine which fills the returned FileInfo channel
 	// Must close FileInfo channel when done
 	// Must listen for SIGTERM|SIGINT signals and abort if received
-	// May report errrors or information about the progress through generateResult, which must be closed when done. Return nothing
+	// May report errrors or information about the progress through generateResult, which must NOT be closed when done. Return nothing
 	// if there is nothing to report
 	// Must listen on done and return asap
 	Generate(done <-chan bool) (files <-chan FileInfo, generateResult <-chan Result)

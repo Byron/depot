@@ -111,7 +111,7 @@ func TestSeal(t *testing.T) {
 	wg := sync.WaitGroup{}
 	for i := 0; uint(i) < nprocs; i++ {
 		wg.Add(1)
-		cmd.Gather(files, results, &wg, done)
+		go cmd.Gather(files, results, &wg, done)
 	}
 	go func() {
 		wg.Wait()
@@ -142,7 +142,7 @@ infinity:
 		case r := <-generateResult:
 			{
 				if resHandler("generator", r) {
-					break infinity
+					continue
 				}
 			}
 		case r := <-accumResult:
