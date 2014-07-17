@@ -4,17 +4,17 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="All kinds of documents and configuration, related to any project">
         
-        <link rel="canonical" href="https://byron.github.io/dump/">
-        <link rel="shortcut icon" href="./img/favicon.ico">
+        
+        <link rel="canonical" href="https://byron.github.io/dump/godi/">
+        <link rel="shortcut icon" href="../img/favicon.ico">
 
-        <title>dump</title>
+        <title>godi - go data integrity - dump</title>
 
-        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
-        <link href="./css/prettify-1.0.css" rel="stylesheet">
-        <link href="./css/base.css" rel="stylesheet">
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/prettify-1.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -41,7 +41,7 @@
             </button>
 
             <!-- Main title -->
-            <a class="navbar-brand" href=".">dump</a>
+            <a class="navbar-brand" href="..">dump</a>
         </div>
 
         <!-- Expanded navigation -->
@@ -50,8 +50,8 @@
             <ul class="nav navbar-nav">
             
             
-                <li class="active">
-                    <a href=".">Home</a>
+                <li >
+                    <a href="..">Home</a>
                 </li>
             
             
@@ -61,11 +61,11 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="meta-db/">Meta-Database</a>
+                            <a href="../meta-db/">Meta-Database</a>
                         </li>
                     
                         <li >
-                            <a href="bam/">BAM</a>
+                            <a href="../bam/">BAM</a>
                         </li>
                     
                     </ul>
@@ -73,20 +73,20 @@
             
             
             
-                <li class="dropdown">
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Programming <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="python-coding/">Python Coding</a>
+                            <a href="../python-coding/">Python Coding</a>
                         </li>
                     
                         <li >
-                            <a href="lang/">Languages</a>
+                            <a href="../lang/">Languages</a>
                         </li>
                     
-                        <li >
-                            <a href="godi/">godi - go data integrity</a>
+                        <li class="active">
+                            <a href="./">godi - go data integrity</a>
                         </li>
                     
                     </ul>
@@ -99,7 +99,7 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="license/">License</a>
+                            <a href="../license/">License</a>
                         </li>
                     
                     </ul>
@@ -111,13 +111,13 @@
             <!-- Search, Navigation and Repo links -->
             <ul class="nav navbar-nav navbar-right">
                 
-                <li class="disabled">
-                    <a rel="next" >
+                <li >
+                    <a rel="next" href="../lang/">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="meta-db/">
+                    <a rel="prev" href="../license/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -140,19 +140,68 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
+        <li class="main active"><a href="#examples">Examples</a></li>
+        
+    
+        <li class="main "><a href="#performance">Performance</a></li>
+        
+    
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<p>All kinds of documents and configuration, related to any project </p>
+<p><code>godi</code> stands for "go data integrity" and is a commandline utility to generate signature files from a directory tree. This allows to re-check the tree for consistency, and thus verify the data is intact. This is especially useful if data is retrieved from unreliable media, and copied to another storage device.</p>
+<p>As it is very common to verify copy operations, <code>godi</code> is able to copy files in the moment is hashes them, optionally verifying the destination after it was copied.</p>
+<h2 id="examples">Examples</h2>
+<pre class="prettyprint well"><code class="bash"># Generate a signature for all files in directory tree/
+godi seal tree/
+
+# results in godi-seal.xml file
+</code></pre>
+
+<p>TODO: 
+<em> nprocs - specify how many parallel gather routines there are
+</em> abort-on-error - if False, we continue as long as possible, otherwise we abort and interrupt all currently running procedures
+* log-mode - either off, or verbose, and in future, maybe even a binary one which provides a whole lot of additional information</p>
+<h2 id="performance">Performance</h2>
+<p>Intermediate results indicate a throughput of up to 900MB/s on 2 cores, which is a little more than twice as fast as the single-threaded <a href="http://mediahashlist.org/">mhl</a>.</p>
+<p>I am still wondering why it doesn't benefit from more cores.</p>
+<pre class="prettyprint well"><code class="bash">$ time  ./godi seal ~/Movies
+Sealed 479 files with total size of 407.74786MB in 0.47895445400000003s (851.3290989659139 MB/s, 0 errors)
+
+real    0m0.486s
+user    0m0.879s
+sys 0m0.076s
+</code></pre>
+
+<pre class="prettyprint well"><code class="bash">$ time mhl seal -v -t sha1 -o ~/Movies  ~/Movies
+----------------------
+Finished generating checksums for: 
+   480 file(s) 
+   with total filesize of 407 MB (427719586 bytes)
+----------------------
+Summary:
+   480 of 480 files SUCCEEDED
+-------------------
+End of input.
+Finish date in UTC: 2014-07-17 22:02:42
+MHL file path(s):
+   /Users/byron/Movies/Movies_2014-07-17_220241.mhl
+===================
+
+real    0m1.186s
+user    0m1.100s
+sys 0m0.085s
+</code></pre>
+
 </div>
         </div>
 
         
 
         <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-        <script src="./js/bootstrap-3.0.3.min.js"></script>
-        <script src="./js/prettify-1.0.min.js"></script>
-        <script src="./js/base.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/prettify-1.0.min.js"></script>
+        <script src="../js/base.js"></script>
     </body>
 </html>
