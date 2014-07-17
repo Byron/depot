@@ -142,7 +142,7 @@ infinity:
 		case r := <-generateResult:
 			{
 				if resHandler("generator", r) {
-					continue
+					break infinity
 				}
 			}
 		case r := <-accumResult:

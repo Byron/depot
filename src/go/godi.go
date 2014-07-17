@@ -13,6 +13,9 @@ const (
 	OTHER_ERROR       = 3
 )
 
+// DEBUG
+const nprocs = 1
+
 func main() {
 	cmd, err := cli.ParseArgs(os.Args[1:]...)
 	if err != nil {
@@ -36,12 +39,9 @@ func main() {
 		if runner, ok := cmd.(godi.Runner); !ok {
 			fmt.Fprintln(os.Stderr, "Didn't get Runner interface from cli parser")
 			os.Exit(PROGRAMMING_ERROR)
+		} else {
+			godi.StartEngine(runner, nprocs)
 		}
-		// else if err := runner.Run(); err != nil {
-		// 	fmt.Fprintln(os.Stderr, err)
-		// 	os.Exit(OTHER_ERROR)
-		// }
-
 	default:
 		fmt.Fprintf(os.Stderr, "Invalid command type returned - it didn't support the runner interfacea: %#v", cmd)
 		os.Exit(PROGRAMMING_ERROR)

@@ -1,6 +1,12 @@
 package godi
 
-import "sync"
+import (
+	"fmt"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+)
 
 // A struct holding information about a task, including
 type FileInfo struct {
@@ -49,10 +55,69 @@ type Runner interface {
 	Accumulate(results <-chan Result) <-chan Result
 }
 
-// type Engine struct {
-// 	runner Runner
-// }
+func StartEngine(runner Runner, nprocs uint) {
+	if nprocs > runner.MaxProcs() {
+		nprocs = runner.MaxProcs()
+	}
+	if nprocs == 0 {
+		panic("Can't use nprocs = 0 - check implementation of MaxProcs()")
+	}
 
-// func NewEngine() {
+	results := make(chan Result, nprocs)
+	done := make(chan bool)
 
-// }
+	// assure we close our done channel on signal
+	signals := make(chan os.Signal, 2)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-signals
+		close(done)
+	}()
+
+	files, generateResult := runner.Generate(done)
+
+	wg := sync.WaitGroup{}
+	for i := 0; uint(i) < nprocs; i++ {
+		wg.Add(1)
+		go runner.Gather(files, results, &wg, done)
+	}
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	accumResult := runner.Accumulate(results)
+
+	// Return true if we should break the loop
+	resHandler := func(name string, res Result) bool {
+		if res == nil {
+			// channel closed, have to get out
+			return true
+		}
+
+		if res.Error() != nil {
+			fmt.Fprintln(os.Stderr, res.Error())
+		} else {
+			fmt.Fprintln(os.Stdout, res.Info())
+		}
+
+		return false
+	} // end resHandler
+
+infinity:
+	for {
+		select {
+		case r := <-generateResult:
+			{
+				if resHandler("generator", r) {
+					break infinity
+				}
+			}
+		case r := <-accumResult:
+			{
+				if resHandler("accumulator", r) {
+					break infinity
+				}
+			}
+		} // select
+	} // infinty
+}
