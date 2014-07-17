@@ -6,10 +6,8 @@ import (
 	"godi"
 	"math"
 	"os"
-	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 )
 
 const Name = "seal"
@@ -77,32 +75,29 @@ func (s *SealCommand) SetupParser(parser *flag.FlagSet) error {
 	return nil
 }
 
-func (s *SealCommand) Generate() (<-chan godi.FileInfo, <-chan godi.Result) {
+func (s *SealCommand) Generate(done <-chan bool) (<-chan godi.FileInfo, <-chan godi.Result) {
 	files := make(chan godi.FileInfo)
 	defer close(files)
-	generateResult := make(chan godi.Result)
-	defer close(generateResult)
-
-	signals := make(chan os.Signal, 2)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+	results := make(chan godi.Result)
+	defer close(results)
 
 	go func() {
 		for _, tree := range s.Trees {
-			if !s.traverseFilesRecursively(files, generateResult, signals, tree) {
+			if !s.traverseFilesRecursively(files, results, done, tree) {
 				// interrupted usually, or there was an error
 				break
 			}
 		}
 	}()
 
-	return files, generateResult
+	return files, results
 }
 
 // Traverse recursively, return false if the caller should stop traversing due to an error
-func (s *SealCommand) traverseFilesRecursively(files chan<- godi.FileInfo, generateResult chan<- godi.Result, signals <-chan os.Signal, tree string) bool {
+func (s *SealCommand) traverseFilesRecursively(files chan<- godi.FileInfo, results chan<- godi.Result, done <-chan bool, tree string) bool {
 
 	select {
-	case <-signals:
+	case <-done:
 		return false
 	default:
 		{
@@ -113,7 +108,7 @@ func (s *SealCommand) traverseFilesRecursively(files chan<- godi.FileInfo, gener
 	return true
 }
 
-func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Result, wg *sync.WaitGroup) {
+func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Result, wg *sync.WaitGroup, done <-chan bool) {
 	defer wg.Done()
 	// for f := range files {
 

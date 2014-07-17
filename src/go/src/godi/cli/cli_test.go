@@ -7,10 +7,13 @@ import (
 	"godi/seal"
 	"io/ioutil"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 	"testing"
+	"time"
 )
 
 // Create a new file at given path and size, without possibly required intermediate directories
@@ -151,15 +154,22 @@ func TestSealParsing(t *testing.T) {
 		t.Error("Can't do less than one process here ... ")
 	}
 
-	var rprocs = nprocs + 1 // we count all go routines
-
 	results := make(chan godi.Result, nprocs)
-	files, generateResult := cmd.Generate()
-	wg := sync.WaitGroup{}
+	done := make(chan bool)
 
+	// assure we close our done channel on signal
+	signals := make(chan os.Signal, 2)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-signals
+		close(done)
+	}()
+
+	files, generateResult := cmd.Generate(done)
+	wg := sync.WaitGroup{}
 	for i := 0; uint(i) < nprocs; i++ {
 		wg.Add(1)
-		cmd.Gather(files, results, &wg)
+		cmd.Gather(files, results, &wg, done)
 	}
 	go func() {
 		wg.Wait()
@@ -168,17 +178,12 @@ func TestSealParsing(t *testing.T) {
 	accumResult := cmd.Accumulate(results)
 
 	// Return true if we should break the loop
-	resHandler := func(res godi.Result) bool {
+	resHandler := func(name string, res godi.Result) bool {
 		if res == nil {
-			t.Fatal("Tried retrieval on closed channel")
+			// channel closed, have to get out
+			t.Log("Channel", name, "is closed")
+			return true
 		}
-
-		if rprocs == 0 {
-			t.Fatal("received more done signals than there are workers")
-		}
-		rprocs -= 1
-
-		t.Log("NUM PROCS STILL RUNNING", rprocs)
 
 		if res.Error() != nil {
 			t.Error(res.Error())
@@ -186,23 +191,26 @@ func TestSealParsing(t *testing.T) {
 			t.Log(res.Info())
 		}
 
-		return rprocs == 0
+		return false
 	} // end resHandler
 
+infinity:
 	for {
 		select {
 		case r := <-generateResult:
 			{
-				if resHandler(r) {
-					break
+				if resHandler("generator", r) {
+					break infinity
 				}
 			}
 		case r := <-accumResult:
 			{
-				if resHandler(r) {
-					break
+				if resHandler("accumulator", r) {
+					break infinity
 				}
 			}
+		case <-time.After(5 * time.Second):
+			t.Fatal("Didn't get result after timeout")
 		} // select
 	} // endless loop
 

@@ -34,13 +34,15 @@ type Runner interface {
 	// Must listen for SIGTERM|SIGINT signals and abort if received
 	// May report errrors or information about the progress through generateResult, which must be closed when done. Return nothing
 	// if there is nothing to report
-	Generate() (files <-chan FileInfo, generateResult <-chan Result)
+	// Must listen on done and return asap
+	Generate(done <-chan bool) (files <-chan FileInfo, generateResult <-chan Result)
 
 	// Will be launched as go routine and perform whichever operation on the FileInfo received from input channel
 	// Produces one result per input FileInfo and returns it in the given results channel
 	// Must listen for SIGTERM|SIGINT signals
 	// Use the wait group to mark when done
-	Gather(files <-chan FileInfo, results chan<- Result, wg *sync.WaitGroup)
+	// Must listen on done and return asap
+	Gather(files <-chan FileInfo, results chan<- Result, wg *sync.WaitGroup, done <-chan bool)
 
 	// Accumulate the result channel and produce whatever you have to produce from the result of the Gather steps
 	// When you are done, place a single result instance into accumResult and close the channel
