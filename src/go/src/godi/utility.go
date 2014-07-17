@@ -8,10 +8,10 @@ type FileInfo struct {
 	Path string
 
 	// size of file
-	Size uint64
+	Size int64
 
 	// hash of file
-	sha1 []byte
+	Sha1 []byte
 }
 
 type Result interface {

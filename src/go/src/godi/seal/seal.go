@@ -1,11 +1,16 @@
 package seal
 
 import (
+	"crypto/sha1"
 	"errors"
 	"flag"
+	"fmt"
 	"godi"
+	"io"
+	"io/ioutil"
 	"math"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 )
@@ -77,9 +82,7 @@ func (s *SealCommand) SetupParser(parser *flag.FlagSet) error {
 
 func (s *SealCommand) Generate(done <-chan bool) (<-chan godi.FileInfo, <-chan godi.Result) {
 	files := make(chan godi.FileInfo)
-	defer close(files)
 	results := make(chan godi.Result)
-	defer close(results)
 
 	go func() {
 		for _, tree := range s.Trees {
@@ -88,6 +91,7 @@ func (s *SealCommand) Generate(done <-chan bool) (<-chan godi.FileInfo, <-chan g
 				break
 			}
 		}
+		defer func() { close(files); close(results) }()
 	}()
 
 	return files, results
@@ -95,13 +99,36 @@ func (s *SealCommand) Generate(done <-chan bool) (<-chan godi.FileInfo, <-chan g
 
 // Traverse recursively, return false if the caller should stop traversing due to an error
 func (s *SealCommand) traverseFilesRecursively(files chan<- godi.FileInfo, results chan<- godi.Result, done <-chan bool, tree string) bool {
-
 	select {
 	case <-done:
 		return false
 	default:
 		{
 			// read dir and, build file info, and recurse into subdirectories
+			dirInfos, err := ioutil.ReadDir(tree)
+			if err != nil {
+				results <- &SealResult{nil, "", err}
+				return false
+			}
+
+			// first generate infos
+			for _, fi := range dirInfos {
+				if !fi.IsDir() {
+					files <- godi.FileInfo{
+						Path: filepath.Join(tree, fi.Name()),
+						Size: fi.Size(),
+					}
+				}
+			}
+
+			// then recurse
+			for _, fi := range dirInfos {
+				if fi.IsDir() {
+					if !s.traverseFilesRecursively(files, results, done, filepath.Join(tree, fi.Name())) {
+						return false
+					}
+				}
+			}
 		}
 	}
 
@@ -110,9 +137,38 @@ func (s *SealCommand) traverseFilesRecursively(files chan<- godi.FileInfo, resul
 
 func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Result, wg *sync.WaitGroup, done <-chan bool) {
 	defer wg.Done()
-	// for f := range files {
+	sha1gen := sha1.New()
 
-	// }
+	handleHash := func(f *godi.FileInfo) {
+		res := SealResult{f, "", nil}
+		err := &res.err
+		defer func() { results <- &res }()
+
+		var fd *os.File
+		fd, *err = os.Open(f.Path)
+		defer fd.Close()
+
+		if err != nil {
+			return
+		}
+
+		sha1gen.Reset()
+		var written int64
+		written, *err = io.Copy(sha1gen, fd)
+		f.Sha1 = sha1gen.Sum(nil)
+		if written != f.Size {
+			*err = fmt.Errorf("Filesize of '%s' reported as %d, yet only %d bytes were hashed", f.Path, f.Size, written)
+		}
+	}
+
+	for f := range files {
+		select {
+		case <-done:
+			return
+		default:
+			handleHash(&f)
+		}
+	}
 }
 
 func (s *SealCommand) Accumulate(results <-chan godi.Result) <-chan godi.Result {
