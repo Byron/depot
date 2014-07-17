@@ -10,14 +10,18 @@ import (
 
 const usage = "godi {seal} [--help] args"
 
-type CLISubCommand interface {
+type SubCommand interface {
 	// Keep the given unparsed arguments, as free argument list
 	// May be discarded if unsupported, which is when an error should be provided
 	SetUnparsedArgs(args []string) error
+
 	// Check all set arguments for validity and sanity. This may involve verifying given paths are accessible
 	// before trying to actually use them
 	// Returns error to signal issues
 	SanitizeArgs() error
+
+	// Setup the given parser with whatever flags you require
+	SetupParser(parser *flag.FlagSet) error
 }
 
 // Return a string representing detailed usage information, possibly based on the given parser
@@ -33,6 +37,7 @@ func HelpString(parser *flag.FlagSet) string {
 // was, useful for the end-user.
 // If there was an error, options will be nil
 // The interface return value can also be a string representing a detailed help string
+// You should run SanitizeArgs yourself
 func ParseArgs(args ...string) (interface{}, error) {
 	if len(args) == 0 {
 		args = append(args, os.Args[1:]...)
@@ -44,23 +49,25 @@ func ParseArgs(args ...string) (interface{}, error) {
 
 	// Parse based on subcommand
 	var parser *flag.FlagSet
-	var command CLISubCommand
+	var command SubCommand
 	var helpFlag = false
 	const helpUsage = "Prints detailed help"
 
 	switch cmd := args[0]; cmd {
 	case seal.Name:
-		parser = flag.NewFlagSet(seal.Name, flag.ContinueOnError)
-		parser.BoolVar(&helpFlag, "help", helpFlag, helpUsage)
-		cmd := seal.SealCommand{}
-		command = &cmd
+		command = &seal.SealCommand{}
 	default:
 		return nil, fmt.Errorf("Invalid subcommand: %s\n%s", cmd, usage)
 	}
 
-	if parser == nil || command == nil {
-		panic("Should have a parser and command set by now")
+	if command == nil {
+		panic("Should have command set by now")
 	}
+
+	parser = flag.NewFlagSet(args[0], flag.ContinueOnError)
+	command.SetupParser(parser)
+
+	parser.BoolVar(&helpFlag, "help", helpFlag, helpUsage)
 
 	if err := parser.Parse(args[1:]); err != nil {
 		return nil, errors.New(usage + "\n" + err.Error())

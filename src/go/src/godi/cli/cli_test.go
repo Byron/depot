@@ -1,11 +1,74 @@
 package cli_test
 
 import (
+	"fmt"
+	"godi"
 	"godi/cli"
 	"godi/seal"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 )
+
+// Create a new file at given path and size, without possibly required intermediate directories
+func makeFileOrPanic(path string, size int) string {
+	f, err := os.Create(path)
+	if err != nil {
+		panic(err)
+	}
+
+	if size != 0 {
+		b := [1]byte{0}
+		f.WriteAt(b[:], int64(size-1))
+	}
+
+	return path
+}
+
+// Create a dataset for testing and return the newly created directory
+func makeDatasetOrPanic() (string, string) {
+	base, err := ioutil.TempDir("", "dataset")
+	if err != nil {
+		panic(err)
+	}
+
+	makeFileOrPanic(filepath.Join(base, "1mb.ext"), 1024*1024)
+	makeFileOrPanic(filepath.Join(base, "somebytes_noext"), 313)
+
+	subdir := filepath.Join(base, "subdir")
+	if err := os.Mkdir(subdir, 0777); err != nil {
+		panic(err)
+	}
+	makeFileOrPanic(filepath.Join(subdir, "biggie.foo"), 1024*1024+5123)
+	makeFileOrPanic(filepath.Join(subdir, "smallie.blah"), 123)
+	subdir = filepath.Join(base, "nothing", "stillnothing", "ünicod€")
+	if err := os.MkdirAll(subdir, 0777); err != nil {
+		panic(err)
+	}
+
+	file := makeFileOrPanic(filepath.Join(subdir, "somefile.ext"), 12345)
+	return base, file
+}
+
+// Delete the given tree entirely. Should only be used in conjunction with makeDataset
+// Panics if something is wrong
+// Will only do the work if we are not already in panic
+func rmTree(tree string) {
+	if len(tree) == 0 {
+		panic("Invalid tree given")
+	}
+	res := recover()
+	if res != nil {
+		fmt.Fprintf(os.Stderr, "Keeping tree for debugging at '%s'", tree)
+		panic(res)
+	}
+	if err := os.RemoveAll(tree); err != nil {
+		panic(err)
+	}
+}
 
 func TestParsing(t *testing.T) {
 	if _, err := cli.ParseArgs("invalid_subcommand"); err == nil {
@@ -67,4 +130,90 @@ func TestSealParsing(t *testing.T) {
 	} else {
 		t.Log(err)
 	}
+
+	datasetTree, dataFile := makeDatasetOrPanic()
+	defer rmTree(datasetTree)
+
+	cmd = sealcmdChecked(dataFile)
+	if err := cmd.SanitizeArgs(); err == nil {
+		t.Error("Expected it to not like files as directory")
+	} else {
+		t.Log(err)
+	}
+
+	cmd = sealcmdChecked(datasetTree)
+	if err := cmd.SanitizeArgs(); err != nil {
+		t.Error("Sanitize didn't like existing tree")
+	}
+
+	var nprocs uint = 1
+	if nprocs > cmd.MaxProcs() {
+		t.Error("Can't do less than one process here ... ")
+	}
+
+	var rprocs = nprocs + 1 // we count all go routines
+
+	results := make(chan godi.Result, nprocs)
+	files, generateResult := cmd.Generate()
+	wg := sync.WaitGroup{}
+
+	for i := 0; uint(i) < nprocs; i++ {
+		wg.Add(1)
+		cmd.Gather(files, results, &wg)
+	}
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	accumResult := cmd.Accumulate(results)
+
+	// Return true if we should break the loop
+	resHandler := func(res godi.Result) bool {
+		if res == nil {
+			t.Fatal("Tried retrieval on closed channel")
+		}
+
+		if rprocs == 0 {
+			t.Fatal("received more done signals than there are workers")
+		}
+		rprocs -= 1
+
+		t.Log("NUM PROCS STILL RUNNING", rprocs)
+
+		if res.Error() != nil {
+			t.Error(res.Error())
+		} else {
+			t.Log(res.Info())
+		}
+
+		return rprocs == 0
+	} // end resHandler
+
+	for {
+		select {
+		case r := <-generateResult:
+			{
+				if resHandler(r) {
+					break
+				}
+			}
+		case r := <-accumResult:
+			{
+				if resHandler(r) {
+					break
+				}
+			}
+		} // select
+	} // endless loop
+
+	// if rprocs != 0 {
+	// 	t.Error("nprocs - rprocs mismatch", rprocs, nprocs)
+	// }
+
+	// // godi.
+	// cmd.Generate()
+	// if err := cmd.Run(); err != nil {
+	// 	t.Error(err)
+	// }
+
 }
