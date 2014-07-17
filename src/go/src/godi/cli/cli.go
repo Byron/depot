@@ -11,7 +11,13 @@ import (
 const usage = "godi {seal} [--help] args"
 
 type CLISubCommand interface {
+	// Keep the given unparsed arguments, as free argument list
+	// May be discarded if unsupported, which is when an error should be provided
 	SetUnparsedArgs(args []string) error
+	// Check all set arguments for validity and sanity. This may involve verifying given paths are accessible
+	// before trying to actually use them
+	// Returns error to signal issues
+	SanitizeArgs() error
 }
 
 // Return a string representing detailed usage information, possibly based on the given parser
@@ -64,8 +70,6 @@ func ParseArgs(args ...string) (interface{}, error) {
 		return HelpString(parser), nil
 	}
 
-	if err := command.SetUnparsedArgs(parser.Args()); err != nil {
-		return nil, err
-	}
-	return command, nil
+	err := command.SetUnparsedArgs(parser.Args())
+	return command, err
 }

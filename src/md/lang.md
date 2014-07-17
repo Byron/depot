@@ -91,6 +91,12 @@
 
 * Very nice documentation - so far, the best looking
 
+## Python
+
+### Pro
+
+* It's possible to write a lot with a small amount of code ! It's actually quite convenient to write it, common tasks are simple and easily expressed.
+
 
 # Comparison
 
