@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 )
 
 const Name = "seal"
@@ -186,6 +187,8 @@ func (s *SealCommand) Accumulate(results <-chan godi.Result) <-chan godi.Result 
 
 		var count uint = 0
 		var errCount uint = 0
+		var size uint64 = 0
+		st := time.Now()
 		for r := range results {
 			if r.Error() != nil {
 				errCount += 1
@@ -194,9 +197,12 @@ func (s *SealCommand) Accumulate(results <-chan godi.Result) <-chan godi.Result 
 			// DEBUG
 			count += 1
 			sr := r.(*SealResult)
-			fmt.Fprintf(os.Stderr, "%s: %x\n", sr.finfo.Path, sr.finfo.Sha1)
+			size += uint64(sr.finfo.Size)
+			accumResult <- &SealResult{nil, fmt.Sprintf("%s: %x", sr.finfo.Path, sr.finfo.Sha1), nil}
 		}
-		accumResult <- &SealResult{nil, fmt.Sprintf("Accumulated %d files (%d errors)", count, errCount), nil}
+		elapsed := time.Now().Sub(st).Seconds()
+		sizeMB := float32(size) / (1024.0 * 1024.0)
+		accumResult <- &SealResult{nil, fmt.Sprintf("Sealed %d files with total size of %#vMB in %vs (%#v MB/s, %d errors)", count, sizeMB, elapsed, float64(sizeMB)/elapsed, errCount), nil}
 	}()
 
 	return accumResult

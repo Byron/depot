@@ -5,6 +5,7 @@ import (
 	"godi"
 	"godi/cli"
 	"os"
+	"runtime"
 )
 
 const (
@@ -13,10 +14,11 @@ const (
 	OTHER_ERROR       = 3
 )
 
-// DEBUG
-const nprocs = 1
+// DEBUG - this should be a flag
+const nprocs = 2
 
 func main() {
+	runtime.GOMAXPROCS(nprocs)
 	cmd, err := cli.ParseArgs(os.Args[1:]...)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
