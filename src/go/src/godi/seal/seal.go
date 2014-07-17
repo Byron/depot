@@ -139,10 +139,13 @@ func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Res
 	defer wg.Done()
 	sha1gen := sha1.New()
 
-	handleHash := func(f *godi.FileInfo) {
-		res := SealResult{f, "", nil}
+	// This MUST be a copy of f here, otherwise we will be in trouble thanks to the user of defer in handleHash
+	// we will get f overwritten by the next iteration variable ... it's kind of special, might
+	// be intersting for the mailing list.
+	handleHash := func(f godi.FileInfo) {
+		res := SealResult{&f, "", nil}
 		err := &res.err
-		defer func() { results <- &res }()
+		defer func(res *SealResult) { results <- res }(&res)
 
 		var fd *os.File
 		fd, *err = os.Open(f.Path)
@@ -170,7 +173,7 @@ func (s *SealCommand) Gather(files <-chan godi.FileInfo, results chan<- godi.Res
 		case <-done:
 			return
 		default:
-			handleHash(&f)
+			handleHash(f)
 		}
 	}
 }
