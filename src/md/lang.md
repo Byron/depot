@@ -34,6 +34,7 @@
     * You can easily run a go source file, making it look more like an interpreted language.
     * Thanks to a nice tool-chain, and a standard library that has cross-platform compatibility in mind, it's easy to support multiple platforms, even though your executable has to be recompiled.
     * Cross-platform compilation is built-in, allowing you to produce binaries for all supported platform on a single system, i.e. build windows and linux binaries from OSX. This works as long as you don't use `cgo`, which by no means is commonly done.
+    * Have a look at [gox](https://github.com/mitchellh/gox) for more information
 * **performance**
     * It can be as [fast as C](http://blog.golang.org/profiling-go-programs), but is easer to write
     * Memory consumption can [be very close](http://blog.golang.org/profiling-go-programs) to C
@@ -44,6 +45,7 @@
     * Has **fast** [regexp](http://swtch.com/~rsc/regexp/regexp1.html)
 * **coding style**
     * It encourages a [coding style](http://talks.golang.org/2013/bestpractices.slide) with very short variable names, which makes it harder to understand at first, yet produces rather bulk-free code after all. To me, it's a good thing, it's quite the opposite of what `swift` encourages as well.
+    * Weak references not required thanks to mark&sweep garbage collector. Therefore, cycles are an issue of the past.
 
 ### Con
 
@@ -53,11 +55,19 @@
 * **generics**
     * There is no generic support, even though it might be added in the future. A proposed workaround is to use builtin arrays or maps with explicit unboxing.
 * **cli libraries**
-    * there seems to be no library which can automatically generate a help-text, as arg-parse does it. This is sad, as standalone commandline tools should have been the prime application for go in my thinking.
+    * there seems to be no library which can automatically generate high-quality help-text, as arg-parse does it. This is sad, as standalone commandline tools should have been the prime application for go in my thinking.
         + however, even subcommands can be implemented using it, even though you have to work more for it.
-    * Community libraries I tried were highly immature ([optparse-go](https://code.google.com/p/optparse-go), opts-go)
+    * This [community library](https://github.com/codegangsta/cli) seems to be what you will want to use instead. It supports nested subcommands as well, and generates nice help text.
+* **Ideomatic Inconveniences**
+    + There is no good way to handle enumerations, apart from C-style constants. Swift does that far better, for instance, as well as C++
+    - multi-value returns effectively prevent function chaining, like `f(g())` unless v supports varargs or a slice of interfaces.
+        + Nonetheless I do understand it's done on purpose, in order to prevent people from easily ignoring error returns.
+    + `x = append(x, elm, ...)` is quite cumbersome. Even though it makes sense and has more applications, it's the most inconvenient form of append I have encountered so far.
+
+
 
 ### Interesting
+
 * Callable custom types seem to functions, which are declared as type. That way, you can attach methods to functions.
 
 
