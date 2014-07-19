@@ -85,10 +85,6 @@
                             <a href="./">Languages</a>
                         </li>
                     
-                        <li >
-                            <a href="../godi/">godi - go data integrity</a>
-                        </li>
-                    
                     </ul>
                 </li>
             
@@ -117,7 +113,7 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../godi/">
+                    <a rel="prev" href="../license/">
                         Next <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -213,6 +209,7 @@
 <li>You can easily run a go source file, making it look more like an interpreted language.</li>
 <li>Thanks to a nice tool-chain, and a standard library that has cross-platform compatibility in mind, it's easy to support multiple platforms, even though your executable has to be recompiled.</li>
 <li>Cross-platform compilation is built-in, allowing you to produce binaries for all supported platform on a single system, i.e. build windows and linux binaries from OSX. This works as long as you don't use <code>cgo</code>, which by no means is commonly done.</li>
+<li>Have a look at <a href="https://github.com/mitchellh/gox">gox</a> for more information</li>
 </ul>
 </li>
 <li><strong>performance</strong><ul>
@@ -229,6 +226,7 @@
 </li>
 <li><strong>coding style</strong><ul>
 <li>It encourages a <a href="http://talks.golang.org/2013/bestpractices.slide">coding style</a> with very short variable names, which makes it harder to understand at first, yet produces rather bulk-free code after all. To me, it's a good thing, it's quite the opposite of what <code>swift</code> encourages as well.</li>
+<li>Weak references not required thanks to mark&amp;sweep garbage collector. Therefore, cycles are an issue of the past.</li>
 </ul>
 </li>
 </ul>
@@ -244,11 +242,20 @@
 </ul>
 </li>
 <li><strong>cli libraries</strong><ul>
-<li>there seems to be no library which can automatically generate a help-text, as arg-parse does it. This is sad, as standalone commandline tools should have been the prime application for go in my thinking.<ul>
+<li>there seems to be no library which can automatically generate high-quality help-text, as arg-parse does it. This is sad, as standalone commandline tools should have been the prime application for go in my thinking.<ul>
 <li>however, even subcommands can be implemented using it, even though you have to work more for it.</li>
 </ul>
 </li>
-<li>Community libraries I tried were highly immature (<a href="https://code.google.com/p/optparse-go">optparse-go</a>, opts-go)</li>
+<li>This <a href="https://github.com/codegangsta/cli">community library</a> seems to be what you will want to use instead. It supports nested subcommands as well, and generates nice help text.</li>
+</ul>
+</li>
+<li><strong>Ideomatic Inconveniences</strong><ul>
+<li>There is no good way to handle enumerations, apart from C-style constants. Swift does that far better, for instance, as well as C++</li>
+<li>multi-value returns effectively prevent function chaining, like <code>f(g())</code> unless v supports varargs or a slice of interfaces.<ul>
+<li>Nonetheless I do understand it's done on purpose, in order to prevent people from easily ignoring error returns.</li>
+</ul>
+</li>
+<li><code>x = append(x, elm, ...)</code> is quite cumbersome. Even though it makes sense and has more applications, it's the most inconvenient form of append I have encountered so far.</li>
 </ul>
 </li>
 </ul>
