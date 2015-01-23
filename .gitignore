@@ -8,3 +8,5 @@ cover/
 /build/
 /pages/
 /doc/
+
+target/

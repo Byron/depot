@@ -25,6 +25,9 @@
 
 ### Pro
 * **type safety**
+* **rich standard library**
+    + It won't have you miss a thing
+    + Especially time handling is very well done and feels just right
 * **tool-chain**
     * It comes with everything you need to build your go programs, providing facilities to download missing libraries.
     * Builds are extremely fast.
@@ -63,12 +66,13 @@
     - multi-value returns effectively prevent function chaining, like `f(g())` unless v supports varargs or a slice of interfaces.
         + Nonetheless I do understand it's done on purpose, in order to prevent people from easily ignoring error returns.
     + `x = append(x, elm, ...)` is quite cumbersome. Even though it makes sense and has more applications, it's the most inconvenient form of append I have encountered so far.
+    - There is no max/min for `int` types for instance. These are easily implemented, but due to the missing generics, these kind of standard functions will have to be implemented over and over again unless there is some community library to do fill the gap.
 
 
 
 ### Interesting
 
-* Callable custom types seem to functions, which are declared as type. That way, you can attach methods to functions.
+* Callable custom types may be functions, which are declared as type. That way, you can attach methods to functions.
 
 
 ### Resources
@@ -108,6 +112,25 @@
 * It's possible to write a lot with a small amount of code ! It's actually quite convenient to write it, common tasks are simple and easily expressed.
 
 
+## Rust
+
+### Pro
+
+* SAFETY and SPEED at low overhead (if at all)
+* Nice documentation thanks to API docs, language reference and book. It's all very well written and a fun read.
+* cargo build and deployment system, which is able to handle dependencies correctly (it seems)
+    * stackable, hierarchical configuration files to allow overrides - useful for patching existing libraries
+    * calls custom build scripts and allow rich integration for text-processing tools, like yacc
+    * feature system allows for different builds with a variable feature set, like godi with and without web server gui
+* Dynamic loading of plugins
+* Very promising and good look API doc generation, including doc-tests ! Allows to embed other languages as well.
+* Uses static linking by default ('rlib'), which may be a platform specific default. This will help deployment a lot.
+
+### Con
+
+* **It's ALPHA and constantly changing**. Lot's of existing code out there is outdated, at least if it's not libraries that are meant to stay, like `piston`. The latter also changes a lot, which doesn't help ;).
+* Even though cross-platform compilation is possible, it's not yet implemented conveniently.
+
 # Comparison
 
 Please note that the following table will look correctly only with github flavored markdown.
@@ -122,6 +145,7 @@ cpp          | ✓           |  ✓       | ✓          | ✘ (✓)            
 go           | ✓           |  ✘       | ✘          | ✓                  | ★★★        |  ✓       | ★★★         | ✘       |  ✓         | (✓)       | ❍     | ✘          |
 dart         | ❍ (✓)       |  ❍       | ❍          | ✓                  | ❍          |  ✓       | ★★☆         | ✓       |  ❍         |  ❍        | ❍     | ❍          |
 swift        | ✓           |  ✓       | ✘          | ✓                  | ★★☆        |  ✓       | ★★★         | ❍       | (✓)        |  ✓        | ✓     | ✓          |
+rust         | ✓           |  ✓       | ✘          | ✘ (✓)              | ?          |  ✓       | ★★★         | ✓       | ?          |  ✓        | ✓     | ✓          |
 
 
 ## Tool Chain Features
@@ -133,6 +157,7 @@ cpp          | ✓            | ✓               | ✘              | ✘      
 go           | ✓            | ✓               | ✘              | ✓              | ✘        | (✓) |  ✓           | ✓ | ✓ | ✘   |
 dart         | ❍            | ❍               | ✓              | -              | ❍        |  ✓  |  ❍           | ✓ | ✘ | ✘   |
 swift        | ✓            | ✓               | ✘              | ✘              | ✓        |  ✓  |  ❍           | ✘ | ✘ | ✘   |
+rust         | ?            | ?               | ✘              | (✓)            | ?        |  ✘  |  ✓           | ✓ | ✓ | ✘   |
 
 * **Legend**
     * ✘  : not supported
