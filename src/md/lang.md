@@ -125,6 +125,11 @@
 * Dynamic loading of plugins
 * Very promising and good look API doc generation, including doc-tests ! Allows to embed other languages as well.
 * Uses static linking by default ('rlib'), which may be a platform specific default. This will help deployment a lot.
+* strings always contain valid unicode, and can contain 0 as they are not null-terminated.
+* Great type-inference system to save a lot of typing on the programmers side.
+* Great error handling methodology: `let line = std::io::stdin().read_line().ok().expect("Need stdin to work")`
+* extremely powerful and versatile enumerations !
+
 
 ### Con
 

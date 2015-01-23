@@ -14,6 +14,6 @@
 /// }
 /// ```
 pub fn add_one(v: i32) -> i32 {
-	//! **Note:** This documentation should appear in the parent doc
-	v + 1
+    //! **Note:** This documentation should appear in the parent doc
+    v + 1
 }
