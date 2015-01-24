@@ -407,3 +407,56 @@ fn methods() {
     let Centimeters(myone) = cm;
     assert!(myone == cm.0);
 }
+
+#[test]
+fn closures() {
+    // note that THIS doesnt work: x + 1 - type inference fails I guess
+    // borrow closure for read-only access: |&:|
+    let add_one_ref = |&: x| { 1 + x };
+    let explicit_add_one_ref = |&: x: i32| { x + 1 };
+    let x = 1;
+
+    assert!(add_one_ref(x) == 2);
+    assert!(x == 1);
+    assert!(explicit_add_one_ref(x) == 2);
+    assert!(x == 1);
+
+    // mutable borrow closure returns ownership after so: |&mut|
+    let mut x = 1;
+    {
+        let mut add_one_to_x = |&mut:| -> i32 { x += 1; x };
+        assert!(add_one_to_x() == 2);
+        // assert!(add_one_to_x() == x); // doesn't work because x is still borrowed mutably
+        // assert!(2 == x);             // same here ... :)
+        // x = 2;                       // no writing !
+    }
+    
+    assert!(x == 2);
+    x = 3;   // can adjust it again
+    let x = x; // drop mutability
+    assert!(x == 3);
+    // x = 5;  // this fails now !
+
+    // TODO: MOVING CLOSURE
+    // let mut x = 1;
+    {
+        // let add_one_to_x = || { x += 1 };
+        // add_one_to_x();
+        // assert!(x == 2);
+    }
+    // assert!(x == 2);
+
+
+    let x = 3;
+    fn thrice<F: Fn(i32) -> i32>(x: i32, f: F) -> i32 {
+        f(x) * 3
+    }
+
+    fn subtract_one(x: i32) -> i32 {
+        x - 1
+    }
+
+    assert_eq!(thrice(x, |x| { x - 1 }), 6);
+    assert!(x == 3);
+    assert_eq!(thrice(x, subtract_one), 6);
+}
