@@ -1,6 +1,10 @@
 #![allow(unstable)]
+#![feature(box_syntax)]
 
-use std::{io,vec};
+use std::cell::RefCell;
+use std::{io, vec};
+use std::rc::Rc;
+use std::iter::range;
 
 static LONG_LIVED: &'static str = "foo";
 
@@ -38,8 +42,8 @@ fn compound_data() {
         y: i32,
     }
 
-    let mut p = Point{x: 0, y: 0};
-    let mut o = Point{x: p.x, y: p.y};
+    let mut p = Point { x: 0, y: 0 };
+    let mut o = Point { x: p.x, y: p.y };
 
     p.x = 5;
     o.x = 10;
@@ -55,7 +59,7 @@ fn compound_data() {
     struct Inches(f32);
     let i = Inches(25.0);
 
-    assert!(i.0 == 25.0);
+    assert_eq!(i.0, 25.0);
 }
 
 #[test]
@@ -197,4 +201,169 @@ fn vectors() {
     b.push(v);
     v.x = 4;
     assert!(b[0].x == 3);
+}
+
+#[test]
+#[allow(dead_code)]
+#[allow(unused_variables)]
+fn ownership() {
+    struct Car {
+        name: String,
+    }
+
+    #[derive(Copy)]
+    struct Wheel<'a> {
+        owner: &'a Car,
+    }
+
+    static NUM_WHEELS: u8 = 4;
+    let car = Car { name: "DeLorean".to_string() };
+
+    for _ in range(0, NUM_WHEELS) {
+        Wheel { owner: &car };
+    }
+
+    // Borrows are always fine - they are read-only !
+    let wheels = [Wheel { owner: &car }; 4];
+
+    let mut dyn_wheels = Vec::with_capacity(NUM_WHEELS as usize);
+    for _ in range(0, NUM_WHEELS) {
+        dyn_wheels.push(box Wheel { owner: &car });
+    }
+
+    let ocar = Rc::new(RefCell::new(Car { name: "Trabant".to_string() }));
+
+
+    // Mutable reference only really work with RefCell and refcounts in this case
+    // also means the car needs heap allocation, even though stack allocation should
+    // be fine ... is there a better way to this ?
+    struct OWheel {
+        owner: Rc<RefCell<Car>>,
+    }
+
+    let mut wheels = Vec::new();
+    for _ in range(0, NUM_WHEELS) {
+        wheels.push(OWheel { owner: ocar.clone() });
+    }
+
+    // Car with replaceable wheels and backpointer of wheel to car
+    struct OCar<'a> {
+        wheels: &'a mut [Wheel<'a>; 4]
+    }
+
+    // impl<'a> OCar<'a> {
+    //     fn replace_wheel(&'a mut self, wheel_id: usize) -> Wheel<Self> {
+    //         let mut previous = self.wheels[wheel_id];
+    //         self.wheels[wheel_id] = Wheel { owner: self as &Self };
+    //         previous
+    //     }
+    // }
+}
+
+#[test]
+#[allow(unused_variables)]
+fn advanced_patterns() {
+
+    let x = 3;
+    match x {
+        1 | 2 => assert!(false, "Shouldn't be here"),
+        _ => (),
+    }
+
+    match x {
+        e @ 0 ... 3 => { format!("x is between 0 and incl. 3: {}", e); () },
+        _ => assert!(false, "inclusive range expected"),
+    }
+
+    let x = Some(5);
+    match x {
+        Some(..) => (),
+        None => assert!(false, "Should have some"),
+    }
+
+    // pattern guards use if
+    match x {
+        Some(v) if v == 5 => (),
+        _ => assert!(false, "Should have made conditional match")
+    }
+
+    // destructuring pattern (implicit derefenece ... kind of)
+    let y: &i32 = &x.unwrap();
+    match y {
+        &y => (),   // note that here x, is dereferenced, so we get a value // i32
+    }
+
+    // You can ask for a ref explicitly though
+    match x {
+        ref z => (), // &i32
+    }
+
+    let mut x = 5;
+    match x {
+        ref mut z => (), //&mut i32
+    }
+
+    struct Point {
+        x: i32,
+        y: i32,
+    }
+
+    // Destructure members of struct
+    let mut p = Point {x: 1, y: 2};
+    match p {
+        Point { x: u, y: v } => p.x += p.y,
+    }
+    assert!(p.x == 3);
+
+    // Destruction only some members
+    match p{
+        // without ref mut, we would get a copy of the POD
+        Point { y: ref mut u, .. } => {*u += 5; ()}, 
+    }
+    assert!(p.y == 7);
+
+    match p {
+        ref mut m if m.x == 3 => m.x += 3,
+        // m => (), this would move p, so it can't be used anymore
+        _ => assert!(false),
+    }
+    assert!(p.x == 6);
+
+    // you can also define you want a borrow right away
+    match &mut p {
+        m => m.x += 3,
+    }
+
+    // decomposition cannot be nested, so Some(Point(x: x, y: y)) won't work
+    let mut p = Some(Point { x: 5, y: 10 } );
+    match p {
+        Some(ref mut p) => { p.x += p.y; () },  // p is &Point, *p.x is a way to access it
+        None => assert!(false),
+    }
+    assert!(p.unwrap().x == 15);
+
+
+    // Tuple destucturing !
+    let mut t = (5, "foo", 24.0);
+
+    match t {
+        (ref mut x, _, _) if *x == 5 => *x += 5,
+        (_, x, _) if x == "bar" => (),
+        (_, _, _) => (),
+    }
+    assert!(t.0 == 10);
+
+    // Array destructuring
+    // NOTE: For arrays with any unkonwn size, .. works !
+    // Tuples require you to do 
+    let mut a = [1, 2, 3];
+    match &mut a {
+        &mut [ref mut u, ref mut v, _] if *u == 1 && *v == 2 => { 
+            *u += 3; 
+            *v += 2 },
+        &mut [..] => (),
+        // _ => (), would be equivalent
+    }
+    assert!(a[0] == a[1]);
+
 }

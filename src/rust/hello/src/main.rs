@@ -15,17 +15,22 @@ use std::rand;
 use std::cmp::Ordering;
 
 fn main() {
-    let mut x = 0;
+    let (mut x,mut y) = (0, 0);
     let mut out = std::io::stderr();
 
     for _ in 0..2 {
-        out.write_line(format!("Hello, world: {} !", x).as_slice()).ok().expect("Really have to print hello world");
+        out.write_line(format!("Hello, world: {}, {} !", x, y).as_slice()).ok().expect("Really have to print hello world");
         x = mylib::add_one(x);
+        y = mylib::add_two(y);
     }
 
     const MAX: u32 = 100;
     const MIN: u32 = 1;
     let secret = (rand::random::<u32>() % MAX) + MIN;
+
+    // this will be removed during release builds, whereas assert!() always remains
+    debug_assert!(MIN <= secret);
+    debug_assert!(secret <= MAX);
 
     let mut guess_count = 0;
     loop {
@@ -53,7 +58,7 @@ fn main() {
 
         let res = cmp(guess_number, secret);
         println!("{}", match res {
-            Ordering::Equal => "You made it !!!",
+            Ordering::Equal => "Correct !!!",
             Ordering::Less => "Secret was larger",
             Ordering::Greater => "Secret was smaller",
         });

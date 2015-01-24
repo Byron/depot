@@ -129,12 +129,16 @@
 * Great type-inference system to save a lot of typing on the programmers side.
 * Great error handling methodology: `let line = std::io::stdin().read_line().ok().expect("Need stdin to work")`
 * extremely powerful and versatile enumerations !
+* Generics ! Everywhere !
+* Powerful macro system for meta-programming/code generation (to what extend ?)
+* Incredibly powerful and useful pattern matching with `match`
 
 
 ### Con
 
 * **It's ALPHA and constantly changing**. Lot's of existing code out there is outdated, at least if it's not libraries that are meant to stay, like `piston`. The latter also changes a lot, which doesn't help ;).
-* Even though cross-platform compilation is possible, it's not yet implemented conveniently.
+* Even though cross-platform compilation is possible, it's not yet implemented conveniently (like `gox` in `go-lang`.
+* Steep learning curve
 
 # Comparison
 
