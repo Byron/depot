@@ -248,13 +248,14 @@ fn ownership() {
 
     // Car with replaceable wheels and backpointer of wheel to car
     struct OCar<'a> {
-        wheels: &'a mut [Wheel<'a>; 4]
+        wheels: [Wheel<'a>; 4]
     }
 
+    // // // TODO: WITH Generics on Wheel !! Car should be OCar here 
     // impl<'a> OCar<'a> {
-    //     fn replace_wheel(&'a mut self, wheel_id: usize) -> Wheel<Self> {
+    //     fn replace_wheel(&'a mut self, wheel_id: usize) -> Wheel {
     //         let mut previous = self.wheels[wheel_id];
-    //         self.wheels[wheel_id] = Wheel { owner: self as &Self };
+    //         self.wheels[wheel_id] = Wheel { owner: self };
     //         previous
     //     }
     // }
@@ -366,4 +367,43 @@ fn advanced_patterns() {
     }
     assert!(a[0] == a[1]);
 
+}
+
+#[test]
+fn methods() {
+
+    const FROM_BASE: f32 = 2.54;
+
+    #[derive(PartialEq)]
+    struct Centimeters(f32);
+    struct Inches(f32);
+
+    impl Centimeters {
+        fn from_inches(inch: &Inches) -> Centimeters {
+            inch.to_cm()
+        }
+    }
+
+    impl Inches {
+        fn from_cm(cm: &Centimeters) -> Inches {
+            Inches(cm.0 * FROM_BASE)
+        }
+
+        fn to_cm(&self) -> Centimeters {
+            Centimeters(self.0 / FROM_BASE)
+        }
+    }
+
+    let cm = Centimeters(20.0);
+    let inch = Inches::from_cm(&cm);
+
+    assert!(cm.0 == 20.0);
+    assert!(cm == inch.to_cm());
+
+    let cm = Centimeters::from_inches(&inch);
+    assert!(cm == inch.to_cm());
+
+    // deconstruction/matching of a NewType
+    let Centimeters(myone) = cm;
+    assert!(myone == cm.0);
 }
