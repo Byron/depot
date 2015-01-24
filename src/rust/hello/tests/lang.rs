@@ -460,3 +460,24 @@ fn closures() {
     assert!(x == 3);
     assert_eq!(thrice(x, subtract_one), 6);
 }
+
+#[test]
+fn iterators() {
+    let mut range_10 = range(0, 10);
+    let mut c = 0us;
+    loop {
+        match range_10.next() {
+            Some(_) => (),
+            None => break,
+        }
+
+        assert!(c < 10);
+        c += 1;
+    }
+
+    let one_to_hundred = range(1, 101).collect::<Vec<i32>>();
+    assert_eq!(one_to_hundred.len(), 100);
+
+    let one_to_fifty = range(1, std::usize::MAX).take(50).collect::<Vec<usize>>();
+    assert!(one_to_fifty.len() == 50);
+}
