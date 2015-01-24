@@ -481,3 +481,27 @@ fn iterators() {
     let one_to_fifty = range(1, std::usize::MAX).take(50).collect::<Vec<usize>>();
     assert!(one_to_fifty.len() == 50);
 }
+
+#[test]
+fn sizes() {
+
+    assert_eq!(std::mem::size_of::<i32>(), 4);
+    assert_eq!(std::mem::size_of::<Option<i64>>(), 16);
+    assert_eq!(std::mem::size_of::<Option<i32>>(), 8);
+    assert_eq!(std::mem::size_of::<Result<u8, bool>>(), 2);
+
+    #[allow(dead_code)]
+    enum Multiple {
+        One(bool),
+        Two(i32),
+        Three(i64)
+    }
+
+    assert!(std::mem::size_of::<Multiple>() == 16);
+}
+
+#[test]
+fn generics_and_traits() {
+    let v: Option<i32> = Some(5);
+    
+}

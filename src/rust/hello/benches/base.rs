@@ -47,16 +47,6 @@ fn static_array_aggregation_with_iter(b: &mut test::Bencher) {
 }
 
 #[bench]
-fn static_array_aggregation_with_fold(b: &mut test::Bencher) {
-    let a = [1i32; ARRAY_SIZE];
-
-    // GOD
-    b.iter(|| {
-        assert!(a.len() == a.iter().fold(0us, |a, &b| a + b as usize));
-    });
-}
-
-#[bench]
 fn vector_aggregation_with_iter(b: &mut test::Bencher) {
     let mut a = Vec::new();
     a.resize(ARRAY_SIZE, 1i32);
@@ -71,3 +61,39 @@ fn vector_aggregation_with_iter(b: &mut test::Bencher) {
         total += res;
     });
 }
+
+#[bench]
+fn static_array_aggregation_with_fold_on_optionals(b: &mut test::Bencher) {
+    let mut a = Vec::new();
+    a.resize(ARRAY_SIZE, Some(1i32));
+
+    // GOD
+    b.iter(|| {
+        assert!(a.len() == a.iter().fold(0us, |a, &b| a + b.unwrap() as usize));
+    });
+}
+
+
+#[bench]
+fn static_array_aggregation_with_fold(b: &mut test::Bencher) {
+    let a = [1i32; ARRAY_SIZE];
+
+    // GOD
+    b.iter(|| {
+        assert!(a.len() == a.iter().fold(0us, |a, &b| a + b as usize));
+    });
+}
+
+#[bench]
+fn static_array_aggregation_with_fold_on_results(b: &mut test::Bencher) {
+    // Just fill in what's not inferable !
+    let init: Result<_, &str> = Ok(1i32);
+    let mut a = Vec::new();
+    a.resize(ARRAY_SIZE, init);
+
+    // GOD
+    b.iter(|| {
+        assert!(a.len() == a.iter().fold(0us, |a, &b| a + b.unwrap() as usize));
+    });
+}
+
