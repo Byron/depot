@@ -2,9 +2,9 @@
 #![feature(box_syntax)]
 
 use std::cell::RefCell;
-use std::{io, vec};
+use std::io;
 use std::rc::Rc;
-use std::iter::range;
+use std::fmt;
 
 static LONG_LIVED: &'static str = "foo";
 
@@ -146,7 +146,7 @@ fn arrays() {
     // This scope is needed as we have an immutable borrow
     // but want to borrow a mutable later
     {
-        let sl: &[i32] = a.slice(1,2);  // type given just to show it ... useful for fn ()
+        let sl = &a[1 .. 2];  // type given just to show it ... useful for fn ()
         assert!(sl.len() == 1);
         assert!(sl[0] == a[1]);
     }
@@ -182,7 +182,7 @@ fn vectors() {
     // How to deal with resource allocation.
     // This actually works
     let mut v = Single{stream: io::stderr()};
-    let mut b = vec::Vec::new();
+    let mut b = Vec::new();
     b.push(v);
 
     // v was moved, an even though assign works ... 
@@ -196,7 +196,7 @@ fn vectors() {
     }
 
 
-    let mut b = vec::Vec::new();
+    let mut b = Vec::new();
     let mut v = SingleInt{x: 3};
     b.push(v);
     v.x = 4;
@@ -273,19 +273,19 @@ fn advanced_patterns() {
 
     match x {
         e @ 0 ... 3 => { format!("x is between 0 and incl. 3: {}", e); () },
-        _ => assert!(false, "inclusive range expected"),
+        _ => unreachable!(),
     }
 
     let x = Some(5);
     match x {
         Some(..) => (),
-        None => assert!(false, "Should have some"),
+        None => unreachable!(),
     }
 
     // pattern guards use if
     match x {
         Some(v) if v == 5 => (),
-        _ => assert!(false, "Should have made conditional match")
+        _ => unreachable!()
     }
 
     // destructuring pattern (implicit derefenece ... kind of)
@@ -501,7 +501,69 @@ fn sizes() {
 }
 
 #[test]
+#[allow(unused_variables)]
 fn generics_and_traits() {
     let v: Option<i32> = Some(5);
-    
+
+
+    trait Outspoken : fmt::Debug {};
+
+    // This defines a default implementation to anything with the Outspoke trait.
+    trait OutspokenImpl : Outspoken {
+        fn speak(&self) -> String {
+            format!("{:?}", self)
+        }
+    }
+
+    // This line tells the generics system to provide the implementation to all types
+    // which are outspoken
+    impl<T> OutspokenImpl for T where T: Outspoken {}
+
+    #[derive(Debug)]
+    struct MyType(i32);
+
+    // Add Outspoken marker to my type
+    // impl Outspoken for MyType {};
+    // Add Outspoken to all types that have the Debug trait
+    impl<T> Outspoken for T where T: fmt::Debug {}
+
+
+    assert_eq!(format!("{:?}", MyType(15)), "MyType(15)");
+    let mti = MyType(20);
+    assert_eq!(mti.speak(), "MyType(20)");
+
+    // You can bark even though the implementation follows later.
+    // Makes sense as we handle generics at compile time
+    assert_eq!(mti.bark(), "wuff");
+
+    // Add your own methods to any existing type who is Outspoken
+    trait AmendDoggyness : Outspoken {
+        fn bark(&self) -> &str {
+            "wuff"
+        }
+    }
+
+    impl<T> AmendDoggyness for T where T: Outspoken {}
 }
+
+#[test]
+fn name() {
+    trait Outspoken {
+        fn speak(&self) -> String;
+    }
+
+    impl<T> Outspoken for T where T: fmt::Debug {
+        fn speak(&self) -> String {
+            format!("{:?}", self)
+        }
+    }
+
+    #[derive(Debug)]
+    struct MyType(i32);
+
+    fn main() {
+        assert_eq!(format!("{:?}", MyType(15)), "MyType(15)");
+        assert_eq!(MyType(20).speak(), "MyType(20)");
+    }
+}
+

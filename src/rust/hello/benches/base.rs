@@ -82,6 +82,7 @@ fn static_array_aggregation_with_fold(b: &mut test::Bencher) {
     b.iter(|| {
         assert!(a.len() == a.iter().fold(0us, |a, &b| a + b as usize));
     });
+    b.bytes += ARRAY_SIZE as u64;
 }
 
 #[bench]

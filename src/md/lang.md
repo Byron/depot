@@ -131,14 +131,15 @@
 * extremely powerful and versatile enumerations !
 * Generics ! Everywhere !
 * Powerful macro system for meta-programming/code generation (to what extend ?)
-* Incredibly powerful and useful pattern matching with `match`
-
+* Incredibly powerful and useful pattern matching with `match` ... it's even more powerful than I thought as it allows you to achieve auto-dereferencing.
+* Supports valgrind
+* supports channels, iteration over (open) channels, and select on timers and channels.
 
 ### Con
 
 * **It's ALPHA and constantly changing**. Lot's of existing code out there is outdated, at least if it's not libraries that are meant to stay, like `piston`. The latter also changes a lot, which doesn't help ;).
 * Even though cross-platform compilation is possible, it's not yet implemented conveniently (like `gox` in `go-lang`.
-* Steep learning curve
+* somewhat steep learning curve
 
 # Comparison
 
@@ -154,7 +155,7 @@ cpp          | ✓           |  ✓       | ✓          | ✘ (✓)            
 go           | ✓           |  ✘       | ✘          | ✓                  | ★★★        |  ✓       | ★★★         | ✘       |  ✓         | (✓)       | ❍     | ✘          |
 dart         | ❍ (✓)       |  ❍       | ❍          | ✓                  | ❍          |  ✓       | ★★☆         | ✓       |  ❍         |  ❍        | ❍     | ❍          |
 swift        | ✓           |  ✓       | ✘          | ✓                  | ★★☆        |  ✓       | ★★★         | ❍       | (✓)        |  ✓        | ✓     | ✓          |
-rust         | ✓           |  ✓       | ✘          | ✘ (✓)              | ?          |  ✓       | ★★★         | ✓       | ?          |  ✓        | ✓     | ✓          |
+rust         | ✓           |  ✓       | ✘          | ✘ (✓)              | ★★★        |  ✓       | ★★★         | ✓       | statictyps | ✓         | ✓     | ✓          |
 
 
 ## Tool Chain Features
@@ -166,7 +167,7 @@ cpp          | ✓            | ✓               | ✘              | ✘      
 go           | ✓            | ✓               | ✘              | ✓              | ✘        | (✓) |  ✓           | ✓ | ✓ | ✘   |
 dart         | ❍            | ❍               | ✓              | -              | ❍        |  ✓  |  ❍           | ✓ | ✘ | ✘   |
 swift        | ✓            | ✓               | ✘              | ✘              | ✓        |  ✓  |  ❍           | ✘ | ✘ | ✘   |
-rust         | ?            | ?               | ✘              | (✓)            | ?        |  ✘  |  ✓           | ✓ | ✓ | ✘   |
+rust         | ?            | ✓               | ✘              | (✓)            | ?        |  ✘  |  ✓           | ✓ | ✓ | ✘   |
 
 * **Legend**
     * ✘  : not supported
