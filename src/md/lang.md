@@ -129,7 +129,8 @@
 * Great type-inference system to save a lot of typing on the programmers side.
 * Great error handling methodology: `let line = std::io::stdin().read_line().ok().expect("Need stdin to work")`
 * extremely powerful and versatile enumerations !
-* Generics ! Everywhere !
+* Generics ! Everywhere ! Allow to parameterize types and select where to apply implementations using traits.
+* Traits are used as Interface definitions and markers to apply generic implementations to. That's the way to avoid typical issues with hierarchical taxonomies. It's mixins in other languages !
 * Powerful macro system for meta-programming/code generation (to what extend ?)
 * Incredibly powerful and useful pattern matching with `match` ... it's even more powerful than I thought as it allows you to achieve auto-dereferencing.
 * Supports valgrind

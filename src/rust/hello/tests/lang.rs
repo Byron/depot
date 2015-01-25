@@ -547,7 +547,7 @@ fn generics_and_traits() {
 }
 
 #[test]
-fn name() {
+fn outspoken_from_stackoverflow() {
     trait Outspoken {
         fn speak(&self) -> String;
     }
@@ -566,4 +566,13 @@ fn name() {
         assert_eq!(MyType(20).speak(), "MyType(20)");
     }
 }
+
+// #[test]
+// http://stackoverflow.com/questions/28136739/variable-member-array-sizes-in-generic-types
+// fn test_generic_arrays() {
+
+//     struct Vec<T: Sized, Count> {
+//         a: [T; Count]
+//     }
+// }
 
