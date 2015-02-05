@@ -2,9 +2,10 @@
 #![feature(box_syntax)]
 
 use std::cell::RefCell;
-use std::io;
+use std::old_io;
 use std::rc::Rc;
 use std::fmt;
+use std::num::Float;
 
 static LONG_LIVED: &'static str = "foo";
 
@@ -175,18 +176,18 @@ fn vectors() {
     assert!(b.len() == 3);
 
     struct Single {
-        stream: io::LineBufferedWriter<io::stdio::StdWriter>
+        stream: old_io::LineBufferedWriter<old_io::stdio::StdWriter>
     };
 
     // It seems structs are being mem-copied, ownership is not transferred.
     // How to deal with resource allocation.
     // This actually works
-    let mut v = Single{stream: io::stderr()};
+    let mut v = Single{stream: old_io::stderr()};
     let mut b = Vec::new();
     b.push(v);
 
     // v was moved, an even though assign works ... 
-    v.stream = io::stdout();
+    v.stream = old_io::stdout();
     // you can't access a moved v ... is that supposed to be like that ?
     // The cool thing is that members make their parent structs non-copyable automatically.
     // v.stream.write(b"hello");
@@ -565,6 +566,25 @@ fn outspoken_from_stackoverflow() {
         assert_eq!(format!("{:?}", MyType(15)), "MyType(15)");
         assert_eq!(MyType(20).speak(), "MyType(20)");
     }
+}
+
+type MyFloat = f32;
+
+const FOO: MyFloat = <MyFloat as Float>::epsilon().sqrt();
+
+#[test]
+fn type_alias() {
+    let f: MyFloat = 2.0;
+    let mut x = f + 1.0 + <MyFloat as Float>::one();
+    x += 1.0;
+
+    struct Vector {
+        x: MyFloat,
+        y: MyFloat,
+        z: MyFloat
+    }
+
+    let v = Vector { x: 0.0, y: 1.0, z: 2.0 };
 }
 
 // #[test]

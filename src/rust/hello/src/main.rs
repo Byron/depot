@@ -9,14 +9,14 @@ extern crate mylib;
 #[doc(no_inline)]
 pub use std::option::Option;
 
-use std::io;
+use std::old_io;
 use std::os;
 use std::rand;
 use std::cmp::Ordering;
 
 fn main() {
     let (mut x,mut y) = (0, 0);
-    let mut out = std::io::stderr();
+    let mut out = std::old_io::stderr();
 
     for _ in 0..2 {
         out.write_line(format!("Hello, world: {}, {} !", x, y).as_slice()).ok().expect("Really have to print hello world");
@@ -36,7 +36,7 @@ fn main() {
     loop {
 
         print!("Guess a number between {} and {}\n$ ", MIN, MAX);
-        let guess = io::stdin().read_line().ok().expect("Need stdin to work");
+        let guess = old_io::stdin().read_line().ok().expect("Need stdin to work");
         let guess_trimmed = guess.trim();
         if guess_trimmed.len() == 0 {
             out.write_str("Error: no guess made\n").ok();
@@ -46,8 +46,8 @@ fn main() {
         
         // Inference by lhs type !
         let guess_number = match guess_trimmed.parse::<u32>() {
-            Some(v) => v,
-            None => { 
+            Ok(v) => v,
+            Err(e) => { 
                 out.write_line(format!("Couldn't understand your number {:?}", guess_trimmed).as_slice()).ok();
                 os::set_exit_status(3);
                 return;

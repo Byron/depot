@@ -24,7 +24,7 @@ fn simple_threading() {
         // Channels
         let (tx, rx) = channel::<&str>();
         thread::Thread::scoped(move || {
-            range(0, 10).map(|_| tx.send("hi") ).count();
+            for x in range(0, 10) { tx.send("hi"); }
         });
 
         let mut c = 0;

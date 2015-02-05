@@ -98,3 +98,16 @@ fn static_array_aggregation_with_fold_on_results(b: &mut test::Bencher) {
     });
 }
 
+
+#[bench]
+fn array_index_checking(b: &mut test::Bencher) {
+    const ASIZE: usize = 4096;
+    let mut a = [2u8; ASIZE];
+    b.iter(|| {
+        for i in range(1, ASIZE-1) {
+            a[i] = a[i-1] * a[i+1];
+        }
+    })
+}
+
+

@@ -26,3 +26,8 @@ Topics we touch will be:
 * Dependencies and Deployment
 * Is explicit better than implicit ?
 
+#### Notes to self
+
+* cargo builds currently only multi-threaded for dependencies, not for builds itself.
+* rustc builds are single-threaded only, as each artifact 'contains' everything else.
+
