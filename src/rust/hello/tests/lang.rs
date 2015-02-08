@@ -676,6 +676,42 @@ fn eq_on_float() {
     assert_eq!(PartialEqMyFloat{a:1.0}, PartialEqMyFloat{a:1.0});
 }
 
+#[test]
+fn type_inference_of_numbers_in_generics() {
+    use std::num::Float;
+
+    struct Foo<T> {
+        a: T,
+    }
+
+    impl<T: Float> Foo<T> {
+        fn twice(&self) -> T {
+            // self.a * 2.0
+                    // mismatched types:
+                    //  expected `T`,
+                    //     found `_`
+                    // (expected type parameter,
+                    //     found floating-point variable) [E0308]
+            // let one = Float::one();
+            // self.a * (one + one)
+                    // the type of this value must be known in this context
+                    // tests/lang.rs:696             self.a * (one + one)
+            // let two: T = Float::one() + Float::one();
+            // self.a * two
+                    // the type of this value must be known in this context
+                    // tests/lang.rs:699             let two: T = Float::one() + Float::one();
+
+            // This actually works !
+            let one: T = Float::one();
+            self.a * (one + one); // ; added just to allow to proceed.
+
+            // So does this !
+            let two: T = Float::one() + <T as Float>::one();
+            self.a * two
+        }
+    }
+}       
+
 // #[test]
 // http://stackoverflow.com/questions/28136739/variable-member-array-sizes-in-generic-types
 // fn test_generic_arrays() {
