@@ -578,13 +578,13 @@ fn outspoken_from_stackoverflow() {
     }
 }
 
-type MyFloat = f32;
-
-// Constants cant have expression, even if they are known at compile time
-// const FOO: MyFloat = <MyFloat as Float>::epsilon().sqrt();
-
 #[test]
 fn type_alias() {
+    type MyFloat = f32;
+
+    // Constants cant have expression, even if they are known at compile time
+    // const FOO: MyFloat = <MyFloat as Float>::epsilon().sqrt();
+
     let f: MyFloat = 2.0;
     let mut x = f + 1.0 + <MyFloat as Float>::one();
     x += 1.0;
@@ -655,6 +655,25 @@ fn type_aliases() {
     // tests/lang.rs:637         fn bark(&self) {
     // tests/lang.rs:638             println!("Grrrr {}", self.a);
     assert_eq!(Bar::id(), "BAR");
+}
+
+#[test]
+fn eq_on_float() {
+    #[derive(PartialEq,Debug)]
+    // #[derive(PartialEq,Eq,Debug)] // doesn't work, as there is no Eq for Floats
+    struct PartialEqF32 {
+        a: f32,
+    }
+    assert_eq!(PartialEqF32{a:1.0}, PartialEqF32{a:1.0});
+
+    type MyFloat = f32;
+
+    // This has nothing to do with the Eq problem encountered in rust-tracer.
+    #[derive(PartialEq,Debug)]
+    struct PartialEqMyFloat {
+        a: MyFloat,
+    }
+    assert_eq!(PartialEqMyFloat{a:1.0}, PartialEqMyFloat{a:1.0});
 }
 
 // #[test]
