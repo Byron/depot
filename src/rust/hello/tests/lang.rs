@@ -74,6 +74,16 @@ fn enumerations() {
         Greater
     }
 
+    impl Order {
+        fn instance_method(&self) -> &'static str {
+            match *self {
+                Order::Less => "Less",
+                Order::Equal => "Equal",
+                Order::Greater => "Greater",
+            }
+        }
+    }
+
     fn cmp(x: i32, y: i32) -> Order {
         if x < y { Order::Less }
         else if x > y { Order::Greater }
@@ -711,6 +721,22 @@ fn type_inference_of_numbers_in_generics() {
         }
     }
 }       
+
+#[test]
+fn any_writer_reference_and_dynamic_dispatch() {
+    // use std::old_io::Writer;
+    // use std::old_io::stdio;
+    
+    // struct Container<'a> {
+    //     w: &'a mut Writer
+    // }
+
+    // let stdout = stdio::stdout();
+    // let c = Container { w: &mut stdout };
+
+    // // now it should be possible to make calls, like 
+    // c.w.write_u8(1);
+}
 
 // #[test]
 // http://stackoverflow.com/questions/28136739/variable-member-array-sizes-in-generic-types
