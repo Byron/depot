@@ -6,6 +6,8 @@ use std::old_io;
 use std::rc::Rc;
 use std::fmt;
 use std::num::Float;
+use std::vec::Vec;
+use std::iter;
 
 static LONG_LIVED: &'static str = "foo";
 
@@ -170,8 +172,9 @@ fn vectors() {
     // assert!(b.len() == 0);
 
     // vec!() is also possible - it's just how macros can be called in general
-    let mut b = vec!(1,2);
-    assert!(b.len() == 2);
+    let mut b = vec!(1, 4);
+    assert_eq!(b.len(), 2);
+    assert_eq!(b[0], 1);
     b.push(3);
     assert!(b.len() == 3);
 
@@ -202,6 +205,13 @@ fn vectors() {
     b.push(v);
     v.x = 4;
     assert!(b[0].x == 3);
+
+    // preallocate
+    let c: Vec<u8> = range(0u8, 255u8).collect();
+    assert_eq!(c.len(), 255);
+
+    let c: Vec<usize> = iter::repeat(0us).take(500).collect();
+    assert_eq!(c.len(), 500);
 }
 
 #[test]
@@ -425,7 +435,7 @@ fn closures() {
     // mutable borrow closure returns ownership after so: |&mut|
     let mut x = 1;
     {
-        let mut add_one_to_x = |&mut:| -> i32 { x += 1; x };
+        let mut add_one_to_x = || -> i32 { x += 1; x };
         assert!(add_one_to_x() == 2);
         // assert!(add_one_to_x() == x); // doesn't work because x is still borrowed mutably
         // assert!(2 == x);             // same here ... :)
@@ -570,7 +580,8 @@ fn outspoken_from_stackoverflow() {
 
 type MyFloat = f32;
 
-const FOO: MyFloat = <MyFloat as Float>::epsilon().sqrt();
+// Constants cant have expression, even if they are known at compile time
+// const FOO: MyFloat = <MyFloat as Float>::epsilon().sqrt();
 
 #[test]
 fn type_alias() {
@@ -585,6 +596,65 @@ fn type_alias() {
     }
 
     let v = Vector { x: 0.0, y: 1.0, z: 2.0 };
+
+    fn fun<T: Float>() -> T {
+        let one: T = Float::one();
+        let x = one + one + one + one + one; // now x is 5.0T
+        x
+    };
+}
+
+
+#[test]
+fn type_aliases() {
+    // type actually declares something like a new type with given memory layout
+    struct Foo {
+        a: u32,
+    };
+    impl Foo {
+        fn bark(&self) {
+            println!("Wuff {}", self.a);
+        }
+
+        fn id() -> &'static str {
+            "FOO"
+        }
+    }
+    assert_eq!(Foo::id(), "FOO");
+    let f = Foo { a: 1 };
+    f.bark();
+
+    type Bar = Foo;
+    // assert_eq!(!Bar::id(), "FOO");
+    // error: unresolved name `Bar::id`
+    // tests/lang.rs:628     assert_eq!(!Bar::id(), "FOO");
+    let b = Bar { a: 2 };
+    b.bark(); // this works though
+    
+    impl Bar {
+        // This would add a similarly named implementation, that is difficult to call
+        // due to ambiguity.
+        // Interestingly, it also affects Foo, as well as Bar !!
+        // fn bark(&self) {
+        //     println!("Grrrr {}", self.a);
+        // }
+
+        fn id() -> &'static str {
+            "BAR"
+        }   
+    }
+    // b.bark(); // or f.bark();
+    // error: multiple applicable methods in scope [E0034]
+    // tests/lang.rs:625     f.bark();
+    //                         ^~~~~~
+    // tests/lang.rs:615:9: 617:10 note: candidate #1 is defined in an impl for the type `type_aliases::Foo`
+    // tests/lang.rs:615         fn bark(&self) {
+    // tests/lang.rs:616             println!("Wuff {}", self.a);
+    // tests/lang.rs:617         }
+    // tests/lang.rs:637:9: 639:10 note: candidate #2 is defined in an impl for the type `type_aliases::Foo`
+    // tests/lang.rs:637         fn bark(&self) {
+    // tests/lang.rs:638             println!("Grrrr {}", self.a);
+    assert_eq!(Bar::id(), "BAR");
 }
 
 // #[test]

@@ -142,6 +142,12 @@
 * Even though cross-platform compilation is possible, it's not yet implemented conveniently (like `gox` in `go-lang`.
 * somewhat steep learning curve
 
+### Confusion
+
+ * r: &item
+   * Access `r.member`, but `let x: *r`.
+ * `fn foo(b: &bar)` is called like `foo(&b)`, explicit pointer-of operator, even though a reference is created. The C++ person inside of me has to be silenced ;).
+
 # Comparison
 
 Please note that the following table will look correctly only with github flavored markdown.
