@@ -724,18 +724,29 @@ fn type_inference_of_numbers_in_generics() {
 
 #[test]
 fn any_writer_reference_and_dynamic_dispatch() {
-    // use std::old_io::Writer;
-    // use std::old_io::stdio;
+    use std::old_io::Writer;
+    use std::old_io::stdio;
     
-    // struct Container<'a> {
-    //     w: &'a mut Writer
-    // }
+    struct Container<'a> {
+        w: &'a mut (Writer + 'a)
+    }
 
-    // let stdout = stdio::stdout();
-    // let c = Container { w: &mut stdout };
+    let mut stdout = stdio::stdout();
+    let c = Container { w: &mut stdout };
 
-    // // now it should be possible to make calls, like 
-    // c.w.write_u8(1);
+    // now it should be possible to make calls, like 
+    c.w.write_u8(32);
+}
+
+#[test]
+fn traversing_tuples() {
+
+    // one day, I might understand the destructuring syntax ... !
+    // The ampersand is required, and I'd like to be able to explain why.
+    // see http://stackoverflow.com/questions/28405400/why-is-needed-to-destructure-a-list-of-tuples-during-iteration for an answer.
+    for &(a, b, c) in [("hello", 1.0, 5), ("world", 2.0, 2)].iter() {
+        println!("{} {} {}", a, b, c);
+    }
 }
 
 // #[test]
