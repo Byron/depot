@@ -16,18 +16,72 @@ The first part shall be a short Rust introduction, whereas the second one will s
 
 Topics we touch will be:
 
-* The Borrow-Checker
-* Polymorphism
-* Concurrency Patterns
-* C-Interop
-* Standard Library and Thirdparty Libraries
-* Performance and Efficiency
-* Testing and Benchmarking
-* Dependencies and Deployment
+* Rust Intro
+ * Safety
+  * Borrow-Checker
+  * Mutability
+  * Error Handling
+ * Efficiency/Performance
+  * Generics
+  * no garbage collection
+  * Concurrency
+  * Small, static binaries
+ * Feature Highlight
+  * FFI
+  * everything is an expression
+
+* Project Setup and Workflow
+ * A new Binary, using a new library
+ * Testing (tell about rust doc-tests, and examples)
+ * Documentation (show http results, and golang.org)
+ * Benchmarking
+ * Dependencies (see also [godepdency handling](https://code.google.com/p/go-wiki/wiki/PackageManagementTools))
+ * Source-Deployment (tell about local dependency overrides)
+ * Cross-Platform Deployment
+ 
+* Primary Language Features
+ * Safety
+  * Access of Invalid Pointers (The Borrow-Checker)
+  * Memory Leaks
+  * Race Conditions
+  * Starvation/Dead-Lock
+  * Error Handling
+  * Unicode (All strings are guaranteed to be valid unicode)
+ * Performance
+  * Compilation
+  * Runtime
+ * Efficiency
+  * Binary Size
+  * Runtime Memory Consumption
+ * Convenience
+  * Overall project setup and deployment (show [cargo manifest information](http://doc.crates.io/manifest.html#the-project-layout))
+  * Cross-platform compilation
+ * Other Features
+  * Polymorphism
+  * Concurrency
+  * Metaprogramming
+  * Reflection
+  * C-Interop
+
+Other Differences
+
+Difference      | Rust                      | Go                       |
+--------------- | ------------------------- | ------------------------ |
+indentation     | 4 spaces                  | 1 tab                    |
+vars writable   | on demand only            | yes                      |
+names           | underscores               | camelCase                |
+doc-comments    | //! and ///               | normal comments          |
+expressions are | everything                | some things              |
+auto-deref      | method dispatch,recursive | one level                |
+& operator      | is borrow operator        | is address-off operator  |
+
 * Is explicit better than implicit ?
 
 #### Notes to self
 
 * cargo builds currently only multi-threaded for dependencies, not for builds itself.
 * rustc builds are single-threaded only, as each artifact 'contains' everything else.
+* Themes
+ * go: bluelover
+ * rust: red ( or brunette, but is too dark)
 

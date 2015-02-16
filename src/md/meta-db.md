@@ -1,5 +1,5 @@
 ## Meta Database Brainstorm
-
+i
 ### goals
 
 * provide an API for using a data model. The latter is powerful enough to satisfy most storage needs, and can natively handle connections between things

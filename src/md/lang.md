@@ -135,6 +135,8 @@
 * Incredibly powerful and useful pattern matching with `match` ... it's even more powerful than I thought as it allows you to achieve auto-dereferencing.
 * Supports valgrind
 * supports channels, iteration over (open) channels, and select on timers and channels.
+* The more unsafe a data source is, there more difficult it is to access it: more checking is needed.
+* Most expression oriented language, and conditionals like `if` and `match` have a return value to assign to LHS or for use as function return value.
 
 ### Con
 
@@ -184,7 +186,7 @@ rust         | ?            | ✓               | ✘              | (✓)      
     * ❍ (✘|✓) : not sure (with tendency to (not) supported)
     * ★☆ : rating - see feature list for more information
 
-* **Features**
+t* **Features**
     * *Type Safety*
         * Expected types in function signatures and for variables are explicitly defined and/or matter. This allows for compile-time checking of types to assure they are used correctly.
         * Opens up your code for static code analysis, and will help your IDE to auto-complete and hint, generally boosting comfort and convenience, easing the learning curve.

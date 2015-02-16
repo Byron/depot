@@ -743,7 +743,7 @@ fn traversing_tuples() {
 
     // one day, I might understand the destructuring syntax ... !
     // The ampersand is required, and I'd like to be able to explain why.
-    // see http://stackoverflow.com/questions/28405400/why-is-needed-to-destructure-a-list-of-tuples-during-iteration for an answer.
+    // see http://stackoverflow.com/questions/28405400/why-is-needed-to-destructure-a-list-of-tuples-during-iteration for an answer.git 
     for &(a, b, c) in [("hello", 1.0, 5), ("world", 2.0, 2)].iter() {
         println!("{} {} {}", a, b, c);
     }
