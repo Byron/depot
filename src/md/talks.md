@@ -74,6 +74,8 @@ doc-comments    | //! and ///               | normal comments          |
 expressions are | everything                | some things              |
 auto-deref      | method dispatch,recursive | one level                |
 & operator      | is borrow operator        | is address-off operator  |
+Exceptions      | Panic                     | Panic + Recover          |
+Threading-Model | Native Threads (NT)       | Goroutines (on NT)       |
 
 * Is explicit better than implicit ?
 

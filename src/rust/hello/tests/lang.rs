@@ -220,7 +220,7 @@ fn vectors() {
     let c: Vec<u8> = range(0u8, 255u8).collect();
     assert_eq!(c.len(), 255);
 
-    let c: Vec<usize> = iter::repeat(0us).take(500).collect();
+    let c: Vec<usize> = iter::repeat(0).take(500).collect();
     assert_eq!(c.len(), 500);
 }
 
@@ -485,7 +485,7 @@ fn closures() {
 #[test]
 fn iterators() {
     let mut range_10 = range(0, 10);
-    let mut c = 0us;
+    let mut c = 0usize;
     loop {
         match range_10.next() {
             Some(_) => (),
@@ -747,6 +747,161 @@ fn traversing_tuples() {
     for &(a, b, c) in [("hello", 1.0, 5), ("world", 2.0, 2)].iter() {
         println!("{} {} {}", a, b, c);
     }
+
+    for a in &[1, 2, 3] {
+        println!("{}", a);
+    }
+
+    for &a in [1, 2, 3].iter() {
+        println!("{}", a);
+    }
+}
+
+#[test]
+fn into_iter() {
+    use std::iter::IntoIterator;
+
+    fn iterate<I: IntoIterator<Item=String>>(v: I) {
+    }
+
+    // iterate(&["foo".to_string()])
+    // error: type mismatch resolving `<&[collections::string::String; 1] as core::iter::IntoIterator>::Item == collections::string::String`:
+    // expected &-ptr,
+    // found struct `collections::string::String` [E0271]
+    
+    // iterate(["foo".to_string()].iter())
+    // type mismatch resolving `<core::slice::Iter<'_, collections::string::String> as core::iter::IntoIterator>::Item == collections::string::String`:
+    // expected &-ptr,
+    // found struct `collections::string::String` [E0271]
+
+    // This works !
+    iterate(vec!["foo".to_string()]);
+}
+
+fn generic_collect() {
+    use std::iter::IntoIterator;
+
+    fn connected<S, I>(s: I) -> String
+    where S: Str,
+          I: IntoIterator<Item=S> {
+        // have
+        s.into_iter().collect::<Vec<S>>().connect(", ")
+        
+        // want
+        // s.into_iter().connect(", ")
+        // error: type `<I as core::iter::IntoIterator>::IntoIter` does not implement any method in scope named `connect`
+        // tests/lang.rs:790         s.into_iter().connect(", ")
+    }
+
+    connected(&["foo", "bar"]);
+}
+
+#[test]
+fn pair_iterator_pattern() {
+    fn pair_transformer<'a, I>(pairs: I) -> String
+        where I: Iterator<Item=&'a (&'a str, &'a str)> {
+        for pair in pairs {
+            let &(a, b) = pair;
+            // do something
+        }
+        String::new()
+    }
+
+    fn consuming_pair_transformer<'a, I>(pairs: I) -> String
+        where I: Iterator<Item=(&'a str, &'a str)> {
+        for pair in pairs {
+            let (a, b) = pair;
+            // do something
+        }
+        String::new()
+    }
+
+    // This works, natively
+    pair_transformer([("a", "b")].iter());
+
+    // This one too
+    pair_transformer(vec![("a", "b")].iter());
+
+    struct Pair<A: Copy, B: Copy> {
+        first: A,
+        second: B
+    }
+
+    impl<A: Copy, B: Copy> Pair<A, B> {
+        fn from_tuple(t: (A, B)) -> Pair<A, B> {
+            Pair {
+                first: t.0,
+                second: t.1
+            }
+        }
+
+        fn as_tuple(&self) -> (A, B) {
+            (self.first, self.second)
+        }
+    }
+
+    // Consuming custom type instances
+    let pairs = [Pair::from_tuple(("a", "b"))];
+    // pair_transformer(pairs.iter().map(|p| &p.as_tuple()));
+        //     tests/lang.rs:845:44: 845:56 error: borrowed value does not live long enough
+        // tests/lang.rs:845     pair_transformer(pairs.iter().map(|p| &p.as_tuple()));
+        //                                                              ^~~~~~~~~~~~
+        // tests/lang.rs:845:22: 845:57 note: reference must be valid for the method call at 845:21...
+        // tests/lang.rs:845     pair_transformer(pairs.iter().map(|p| &p.as_tuple()));
+        //                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // tests/lang.rs:845:43: 845:56 note: ...but borrowed value is only valid for the block at 845:42
+        // tests/lang.rs:845     pair_transformer(pairs.iter().map(|p| &p.as_tuple()));
+        //                                                             ^~~~~~~~~~~~~
+    // This works now ... 
+    consuming_pair_transformer(pairs.iter().map(|p| p.as_tuple()));
+}
+
+#[test]
+fn pair_trait_for_iteration() {
+    trait Pair<'a, A, B> {
+        fn first_ref(&'a self) -> &'a A;
+        fn second_ref(&'a self) -> &'a B;
+    };
+
+    struct PairOwned<A, B> {
+        first: A,
+        second: B,
+    }
+
+    // Only implemented for the cases we are interested in ...
+    impl<'a, A, B> Pair<'a, A, B> for &'a PairOwned<&'a A,&'a B> {
+        fn first_ref(&'a self) -> &'a A {
+            self.first
+        }
+        fn second_ref(&'a self) -> &'a B {
+            self.second
+        }
+    }
+
+    impl<'a, A, B> Pair<'a, A, B> for &'a(&'a A, &'a B) {
+        fn first_ref(&'a self) -> &'a A {
+            self.0
+        }
+        fn second_ref(&'a self) -> &'a B {
+            self.1
+        }
+    }
+
+    fn pair_transformer<'a, I, T>(pairs: I) -> String
+        where   T: Pair<'a, &'a Str, &'a Str> + 'a,
+                I: Iterator<Item=T> {
+        let mut s = String::new();
+        for pair in pairs {
+            s = s
+                + pair.first_ref().as_slice()
+                + pair.second_ref().as_slice();
+        }
+        s
+    }
+
+    // http://stackoverflow.com/questions/28677561/why-does-my-trait-implementation-not-match
+    // pair_transformer([PairOwned { first: "a", second: "b" }].iter());
+    // pair_transformer([("a", "b")].iter());
 }
 
 // #[test]
