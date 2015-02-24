@@ -858,10 +858,12 @@ fn pair_iterator_pattern() {
 
 #[test]
 fn pair_trait_for_iteration() {
-    trait Pair<'a, A, B> {
+    use std::borrow::Borrow;
+
+    trait Pair<'a, A: ?Sized, B: ?Sized> {
         fn first_ref(&'a self) -> &'a A;
         fn second_ref(&'a self) -> &'a B;
-    };
+    }
 
     struct PairOwned<A, B> {
         first: A,
@@ -869,16 +871,20 @@ fn pair_trait_for_iteration() {
     }
 
     // Only implemented for the cases we are interested in ...
-    impl<'a, A, B> Pair<'a, A, B> for &'a PairOwned<&'a A,&'a B> {
-        fn first_ref(&'a self) -> &'a A {
-            self.first
+    impl<'a, ARef: ?Sized, BRef: ?Sized, A, B> Pair<'a, ARef, BRef> for PairOwned<A,B>
+        where A:    Borrow<ARef>,
+              B:    Borrow<BRef> {
+        fn first_ref(&'a self) -> &'a ARef {
+            self.first.borrow()
         }
-        fn second_ref(&'a self) -> &'a B {
-            self.second
+        fn second_ref(&'a self) -> &'a BRef {
+            self.second.borrow()
         }
     }
 
-    impl<'a, A, B> Pair<'a, A, B> for &'a(&'a A, &'a B) {
+    // It should also be possible to be more generic here with Borrow
+    // But I wanted to leave your original implementation
+    impl<'a, A: ?Sized, B: ?Sized> Pair<'a, A, B> for (&'a A, &'a B) {
         fn first_ref(&'a self) -> &'a A {
             self.0
         }
@@ -888,8 +894,8 @@ fn pair_trait_for_iteration() {
     }
 
     fn pair_transformer<'a, I, T>(pairs: I) -> String
-        where   T: Pair<'a, &'a Str, &'a Str> + 'a,
-                I: Iterator<Item=T> {
+        where   T: Pair<'a, str, str> + 'a,
+                I: Iterator<Item=&'a T> {
         let mut s = String::new();
         for pair in pairs {
             s = s
@@ -899,9 +905,12 @@ fn pair_trait_for_iteration() {
         s
     }
 
-    // http://stackoverflow.com/questions/28677561/why-does-my-trait-implementation-not-match
-    // pair_transformer([PairOwned { first: "a", second: "b" }].iter());
-    // pair_transformer([("a", "b")].iter());
+    pair_transformer([PairOwned { first: "a".to_string(), second: "b".to_string() }].iter());
+    pair_transformer([PairOwned { first: "a".to_string(), second: "b" }].iter()); // It is even possible to mix String and &str
+    pair_transformer([PairOwned { first: "a", second: "b" }].iter());
+    pair_transformer([("a", "b")].iter());
+    pair_transformer(vec![("a", "b")].iter());
+    pair_transformer(vec![("a", "b")][..].iter());
 }
 
 // #[test]
