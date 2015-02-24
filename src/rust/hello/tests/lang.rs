@@ -857,6 +857,27 @@ fn pair_iterator_pattern() {
 }
 
 #[test]
+fn pair_iterator_pattern_borrowed() {
+    use std::borrow::Borrow;
+
+    fn pair_transformer<'a, I, T>(pairs: I) -> String
+        where   T: Borrow<(&'a str, &'a str)>,
+                I: Iterator<Item=T> {
+        let mut s = String::new();
+        for pair in pairs {
+            let &(a, b) = pair.borrow();
+            // do something
+            s = s + a + b;
+        }
+        s
+    }
+
+    let pairs = [("a", "b")];
+    assert_eq!(pair_transformer(pairs.iter()), "ab");
+    assert_eq!(pair_transformer(pairs.iter().map(|p|(p.0, p.1))), "ab");
+}
+
+#[test]
 fn pair_trait_for_iteration() {
     use std::borrow::Borrow;
 
