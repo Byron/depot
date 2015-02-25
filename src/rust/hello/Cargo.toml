@@ -11,3 +11,7 @@ name = "mylib"
 crate-type = ["rlib"]
 
 
+[dev-dependencies]
+rustc-serialize = "*"
+
+

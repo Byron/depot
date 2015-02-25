@@ -1,3 +1,20 @@
+## Rusty Snacks (Short useful vids about Rust)
+
+### Borrow trait
+* How to use Borrow to become indepent of whether something is borrowed or not in generic code.
+
+### Expressionistic
+* Everything is an expression
+* Show how this can be used to assign the result of `match` or `if` to a variable, to prevent deep nesting.
+
+### Type Hinting
+* All the different ways of defining types
+ * indirectly: let mut v = Vec::new(); v.push(5);
+ * definition: let mut v: Vec<u32> = Vec::new();
+ * explicitly: let mut v = Vec::new::<u32>();
+ * call trait: let mut v = <Vec<u32> as Default>::default();
+
+
 ## Munich Gophers
 
 ### Event September 2014

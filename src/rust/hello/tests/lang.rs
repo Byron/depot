@@ -1,6 +1,8 @@
 #![allow(unstable)]
 #![feature(box_syntax)]
 
+extern crate "rustc-serialize" as rustc_serialize;
+
 use std::cell::RefCell;
 use std::old_io;
 use std::rc::Rc;
@@ -933,6 +935,50 @@ fn pair_trait_for_iteration() {
     pair_transformer(vec![("a", "b")].iter());
     pair_transformer(vec![("a", "b")][..].iter());
 }
+
+#[test]
+fn serialize_json() {
+    use rustc_serialize::json;
+
+    // Automatically generate `Decodable` and `Encodable` trait implementations
+    #[derive(RustcDecodable, RustcEncodable)]
+    struct TestStruct  {
+        data_int: u8,
+        data_str: String,
+        data_vector: Vec<u8>,
+    }
+
+    let object = TestStruct {
+        data_int: 1,
+        data_str: "homura".to_string(),
+        data_vector: vec![2,3,4,5],
+    };
+
+    // Serialize using `json::encode`
+    let encoded = json::encode(&object).unwrap();
+
+    // Deserialize using `json::decode`
+    let decoded: TestStruct = json::decode(encoded.as_slice()).unwrap();
+}
+
+#[test]
+fn lifetime_never_used_bug() {
+    // https://github.com/rust-lang/rust/issues/22798
+    struct Foo<'a> {
+        a: &'a str,
+    }
+
+    struct Bar<'a, T = Foo<'a>> {
+        b: T,
+    }
+
+    use std::marker::PhantomData;
+    struct BarWorking <'a, T = Foo<'a>> 
+        where T: 'a {
+        b: T,
+        _m: &'a PhantomData<T>,
+    }
+}   
 
 // #[test]
 // http://stackoverflow.com/questions/28136739/variable-member-array-sizes-in-generic-types
