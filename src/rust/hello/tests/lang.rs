@@ -2,6 +2,7 @@
 #![feature(box_syntax)]
 
 extern crate "rustc-serialize" as rustc_serialize;
+extern crate chrono;
 
 use std::cell::RefCell;
 use std::old_io;
@@ -984,6 +985,7 @@ fn lifetime_never_used_bug() {
 #[test]
 fn traits_and_generics() {
     // https://github.com/rust-lang/rust/issues/22834
+    // CLOSED (Invalid)
     use std::default::Default;
 
     trait Maker {
@@ -1026,8 +1028,42 @@ fn traits_and_generics() {
             }
         }
     }
+}
 
+#[test]
+fn passing_static_refs() {
+    trait Noop: Send {
+        fn noop(&self){}
+    }
 
+    struct Foo {
+        a: &'static str,
+        b: &'static Noop,
+    }
+
+    impl Clone for Foo {
+        fn clone(&self) -> Foo {
+            Foo {
+                a: self.a,
+                b: self.b,
+            }
+        }
+    }
+
+}
+
+#[test]
+fn chrono_time_conversion() {
+    // http://stackoverflow.com/questions/28747694/how-do-i-convert-a-chrono-datetimeutc-instance-to-datetimelocal
+    use chrono::{Local, UTC, TimeZone};
+
+    let utc = chrono::UTC::now();
+    let loc = chrono::Local::now();
+
+    println!("{:?}", utc);
+    println!("{:?}", loc);
+    println!("{:?}", utc.with_timezone(&Local));
+    println!("{:?}", Local.from_utc_datetime(&utc.naive_local()));
 
 }
 
