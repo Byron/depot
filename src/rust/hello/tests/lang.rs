@@ -964,13 +964,14 @@ fn serialize_json() {
 #[test]
 fn lifetime_never_used_bug() {
     // https://github.com/rust-lang/rust/issues/22798
+    // CLOSED
     struct Foo<'a> {
         a: &'a str,
     }
 
-    struct Bar<'a, T = Foo<'a>> {
-        b: T,
-    }
+    // struct Bar<'a, T = Foo<'a>> {
+    //     b: T,
+    // }
 
     use std::marker::PhantomData;
     struct BarWorking <'a, T = Foo<'a>> 
@@ -978,7 +979,57 @@ fn lifetime_never_used_bug() {
         b: T,
         _m: &'a PhantomData<T>,
     }
-}   
+}
+
+#[test]
+fn traits_and_generics() {
+    // https://github.com/rust-lang/rust/issues/22834
+    use std::default::Default;
+
+    trait Maker {
+        type Item;
+
+        fn make(&mut self) -> Self::Item;
+    }
+
+    struct Foo<T> {
+        a: T,
+    }
+
+    // struct Bar;
+    // 
+    // Fails
+    // impl<T> Maker for Bar
+    //     where T: Default  {
+    //     type Item = Foo<T>;
+
+    //     fn make(&mut self) -> Foo<T> {
+    //         Foo {
+    //             a: <T as Default>::default(),
+    //         }
+    //     }
+    // }
+
+    // Works
+    use std::marker::PhantomData;
+    struct Bar<T> {
+        _m: PhantomData<T>
+    }
+
+    impl<T> Maker for Bar<T>
+        where T: Default  {
+        type Item = Foo<T>;
+
+        fn make(&mut self) -> Foo<T> {
+            Foo {
+                a: <T as Default>::default(),
+            }
+        }
+    }
+
+
+
+}
 
 // #[test]
 // http://stackoverflow.com/questions/28136739/variable-member-array-sizes-in-generic-types

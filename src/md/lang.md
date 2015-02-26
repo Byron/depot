@@ -143,6 +143,7 @@
 * **It's ALPHA and constantly changing**. Lot's of existing code out there is outdated, at least if it's not libraries that are meant to stay, like `piston`. The latter also changes a lot, which doesn't help ;).
 * Even though cross-platform compilation is possible, it's not yet implemented conveniently (like `gox` in `go-lang`.
 * somewhat steep learning curve
+* The borrow checker seems greedy, and sometimes flags issues which are actually none.
 
 ### Confusion
 
