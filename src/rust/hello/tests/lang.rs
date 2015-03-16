@@ -1,11 +1,10 @@
-#![allow(unstable)]
-#![feature(box_syntax)]
+#![allow(dead_code, unused_variables, unused_assignments)]
+#![feature(box_syntax, core, std_misc)]
 
 extern crate "rustc-serialize" as rustc_serialize;
 extern crate chrono;
 
 use std::cell::RefCell;
-use std::old_io;
 use std::rc::Rc;
 use std::fmt;
 use std::num::Float;
@@ -132,7 +131,7 @@ fn strings() {
 }
 
 #[test]
-#[should_fail]
+#[should_panic]
 fn no_static_inference() {
     // Compiler cannot see at compile time that this wouldn't work
     // First I put in a signed integer, which gets converted to a unsigned
@@ -191,19 +190,7 @@ fn vectors() {
     b.push(3);
     assert!(b.len() == 3);
 
-    struct Single {
-        stream: old_io::LineBufferedWriter<old_io::stdio::StdWriter>
-    };
 
-    // It seems structs are being mem-copied, ownership is not transferred.
-    // How to deal with resource allocation.
-    // This actually works
-    let mut v = Single{stream: old_io::stderr()};
-    let mut b = Vec::new();
-    b.push(v);
-
-    // v was moved, an even though assign works ... 
-    v.stream = old_io::stdout();
     // you can't access a moved v ... is that supposed to be like that ?
     // The cool thing is that members make their parent structs non-copyable automatically.
     // v.stream.write(b"hello");
@@ -726,22 +713,6 @@ fn type_inference_of_numbers_in_generics() {
 }       
 
 #[test]
-fn any_writer_reference_and_dynamic_dispatch() {
-    use std::old_io::Writer;
-    use std::old_io::stdio;
-    
-    struct Container<'a> {
-        w: &'a mut (Writer + 'a)
-    }
-
-    let mut stdout = stdio::stdout();
-    let c = Container { w: &mut stdout };
-
-    // now it should be possible to make calls, like 
-    c.w.write_u8(32);
-}
-
-#[test]
 fn traversing_tuples() {
 
     // one day, I might understand the destructuring syntax ... !
@@ -1055,7 +1026,7 @@ fn passing_static_refs() {
 #[test]
 fn chrono_time_conversion() {
     // http://stackoverflow.com/questions/28747694/how-do-i-convert-a-chrono-datetimeutc-instance-to-datetimelocal
-    use chrono::{Local, UTC, TimeZone};
+    use chrono::{Local, TimeZone};
 
     let utc = chrono::UTC::now();
     let loc = chrono::Local::now();
@@ -1065,25 +1036,6 @@ fn chrono_time_conversion() {
     println!("{:?}", utc.with_timezone(&Local));
     println!("{:?}", Local.from_utc_datetime(&utc.naive_local()));
 
-}
-
-#[test]
-fn own() {
-    let x = 5;
-    let y = x;
-    assert_eq!(x, y);
-}
-
-#[test]
-fn virtual_calls() {
-    use std::old_io::{Seek, Reader};
-
-    // ... no dynamic dispatch for multiple traits at once
-    fn user(stream: &mut Reader) { }
-
-    fn user_gen<T: Reader+Seek>(stream: &mut T) { }
-
-    // fn user_dynamic(stream: &mut (Reader+Seek)) { }
 }
 
 // #[test]
