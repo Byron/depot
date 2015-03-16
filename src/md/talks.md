@@ -1,7 +1,10 @@
 ## Rusty Snacks (Short useful vids about Rust)
 
 ### Borrow trait
-* How to use Borrow to become indepent of whether something is borrowed or not in generic code.
+* How to use Borrow/BorrowMut to become indepent of whether something is borrowed or not in generic code.
+
+### RefCell Usage
+* Point out that Rc is by no means required ... explain why Rc is used.
 
 ### Expressionistic
 * Everything is an expression
@@ -13,6 +16,10 @@
  * definition: let mut v: Vec<u32> = Vec::new();
  * explicitly: let mut v = Vec::new::<u32>();
  * call trait: let mut v = <Vec<u32> as Default>::default();
+
+### Traits and Generics
+* implications: traits make types harder to use
+* you want traits though to make types easier to use in templates (to hide template parameters)
 
 
 ## Munich Gophers

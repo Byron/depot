@@ -144,6 +144,9 @@
 * Even though cross-platform compilation is possible, it's not yet implemented conveniently (like `gox` in `go-lang`.
 * somewhat steep learning curve
 * The borrow checker seems greedy, and sometimes flags issues which are actually none.
+* Traits need to be imported to be usable, even in situations where there is no ambiguity. This leads to import terror.
+* (traits are needed to make any type usable comfortably in generics. Doing that makes them less comfortable)
+* PhantomData: "the type parameter `D` is not constrained by the impl trait, self type, or predicates", makes using other generic types more cumbersome, and just a chore.
 
 ### Confusion
 
