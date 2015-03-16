@@ -436,8 +436,8 @@ fn methods() {
 fn closures() {
     // note that THIS doesnt work: x + 1 - type inference fails I guess
     // borrow closure for read-only access: |&:|
-    let add_one_ref = |&: x| { 1 + x };
-    let explicit_add_one_ref = |&: x: i32| { x + 1 };
+    let add_one_ref = |x| { 1 + x };
+    let explicit_add_one_ref = |x: i32| { x + 1 };
     let x = 1;
 
     assert!(add_one_ref(x) == 2);
@@ -644,18 +644,18 @@ fn type_aliases() {
     let b = Bar { a: 2 };
     b.bark(); // this works though
     
-    impl Bar {
-        // This would add a similarly named implementation, that is difficult to call
-        // due to ambiguity.
-        // Interestingly, it also affects Foo, as well as Bar !!
-        // fn bark(&self) {
-        //     println!("Grrrr {}", self.a);
-        // }
+    // impl Bar {
+    //     // This would add a similarly named implementation, that is difficult to call
+    //     // due to ambiguity.
+    //     // Interestingly, it also affects Foo, as well as Bar !!
+    //     // fn bark(&self) {
+    //     //     println!("Grrrr {}", self.a);
+    //     // }
 
-        fn id() -> &'static str {
-            "BAR"
-        }   
-    }
+    //     fn id() -> &'static str {
+    //         "BAR"
+    //     }   
+    // }
     // b.bark(); // or f.bark();
     // error: multiple applicable methods in scope [E0034]
     // tests/lang.rs:625     f.bark();
@@ -667,7 +667,7 @@ fn type_aliases() {
     // tests/lang.rs:637:9: 639:10 note: candidate #2 is defined in an impl for the type `type_aliases::Foo`
     // tests/lang.rs:637         fn bark(&self) {
     // tests/lang.rs:638             println!("Grrrr {}", self.a);
-    assert_eq!(Bar::id(), "BAR");
+    // assert_eq!(Bar::id(), "BAR");
 }
 
 #[test]
@@ -1065,6 +1065,25 @@ fn chrono_time_conversion() {
     println!("{:?}", utc.with_timezone(&Local));
     println!("{:?}", Local.from_utc_datetime(&utc.naive_local()));
 
+}
+
+#[test]
+fn own() {
+    let x = 5;
+    let y = x;
+    assert_eq!(x, y);
+}
+
+#[test]
+fn virtual_calls() {
+    use std::old_io::{Seek, Reader};
+
+    // ... no dynamic dispatch for multiple traits at once
+    fn user(stream: &mut Reader) { }
+
+    fn user_gen<T: Reader+Seek>(stream: &mut T) { }
+
+    // fn user_dynamic(stream: &mut (Reader+Seek)) { }
 }
 
 // #[test]

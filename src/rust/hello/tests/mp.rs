@@ -10,7 +10,7 @@ fn name() {
 #[test]
 fn simple_threading() {
     {
-        let guard = thread::Thread::scoped(|| {
+        let guard = thread::scoped(|| {
             panic!("I have failed");
         });
     
@@ -23,8 +23,8 @@ fn simple_threading() {
     {
         // Channels
         let (tx, rx) = channel::<&str>();
-        thread::Thread::scoped(move || {
-            for x in range(0, 10) { tx.send("hi"); }
+        let _ = thread::scoped(move || {
+            for _ in 0 .. 10 { tx.send("hi").ok(); }
         });
 
         let mut c = 0;
