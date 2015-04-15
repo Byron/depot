@@ -10,6 +10,8 @@ repository = "https://github.com/Byron/depot"
 name = "mylib"
 crate-type = ["rlib"]
 
+[dependencies]
+rand = "*"
 
 [dev-dependencies]
 rustc-serialize = "*"

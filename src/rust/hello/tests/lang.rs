@@ -1,14 +1,11 @@
-#![allow(dead_code, unused_variables, unused_assignments)]
-#![feature(box_syntax, core, std_misc)]
+#![allow(dead_code, unused_variables, unused_assignments, deprecated)]
+#![feature(box_syntax, core, std_misc, slice_patterns)]
 
-extern crate "rustc-serialize" as rustc_serialize;
+extern crate rustc_serialize;
 extern crate chrono;
 
-use std::cell::RefCell;
-use std::rc::Rc;
 use std::fmt;
 use std::num::Float;
-use std::vec::Vec;
 use std::iter;
 
 static LONG_LIVED: &'static str = "foo";
@@ -118,16 +115,11 @@ fn enumerations() {
 
 #[test]
 fn strings() {
-    let s = "Hi";                   // This is a string slice
-    assert!(s.len() == 2);
-
-    let si = s.to_string();
-    assert!(si.len() == s.len());
-    assert!(si.ends_with("i"));
-
-    // Actually, replace is read-only as it returns a new string
-    // assert!(si.replace("Hi", "Ho").as_slice() == "Ho")
-    assert!(s.replace("Hi", "Ho").as_slice() == "Ho")
+    let s = "Hi";             // This is a string slice
+    // warning: use of deprecated item: use std::convert::AsRef<str> instead, #[warn(deprecated)] on by default
+    assert!(s.replace("Hi", "Ho").as_slice() == "Ho");
+    // tests/lang.rs:120:35: 120:43 error: type annotations required: cannot resolve `collections::string::String : core::convert::AsRef<_>` [E0283]
+    // assert!(s.replace("Hi", "Ho").as_ref() == "Ho");
 }
 
 #[test]
@@ -207,7 +199,7 @@ fn vectors() {
     assert!(b[0].x == 3);
 
     // preallocate
-    let c: Vec<u8> = range(0u8, 255u8).collect();
+    let c: Vec<u8> = (0u8 .. 255u8).collect();
     assert_eq!(c.len(), 255);
 
     let c: Vec<usize> = iter::repeat(0).take(500).collect();
@@ -218,11 +210,14 @@ fn vectors() {
 #[allow(dead_code)]
 #[allow(unused_variables)]
 fn ownership() {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
     struct Car {
         name: String,
     }
 
-    #[derive(Copy)]
+    #[derive(Copy, Clone)]
     struct Wheel<'a> {
         owner: &'a Car,
     }
@@ -230,7 +225,7 @@ fn ownership() {
     static NUM_WHEELS: u8 = 4;
     let car = Car { name: "DeLorean".to_string() };
 
-    for _ in range(0, NUM_WHEELS) {
+    for _ in 0 .. NUM_WHEELS {
         Wheel { owner: &car };
     }
 
@@ -238,7 +233,7 @@ fn ownership() {
     let wheels = [Wheel { owner: &car }; 4];
 
     let mut dyn_wheels = Vec::with_capacity(NUM_WHEELS as usize);
-    for _ in range(0, NUM_WHEELS) {
+    for _ in 0 .. NUM_WHEELS {
         dyn_wheels.push(box Wheel { owner: &car });
     }
 
@@ -253,7 +248,7 @@ fn ownership() {
     }
 
     let mut wheels = Vec::new();
-    for _ in range(0, NUM_WHEELS) {
+    for _ in 0 .. NUM_WHEELS {
         wheels.push(OWheel { owner: ocar.clone() });
     }
 
@@ -474,7 +469,7 @@ fn closures() {
 
 #[test]
 fn iterators() {
-    let mut range_10 = range(0, 10);
+    let mut range_10 = 0 .. 10;
     let mut c = 0usize;
     loop {
         match range_10.next() {
@@ -486,10 +481,10 @@ fn iterators() {
         c += 1;
     }
 
-    let one_to_hundred = range(1, 101).collect::<Vec<i32>>();
+    let one_to_hundred = (1 .. 101).collect::<Vec<i32>>();
     assert_eq!(one_to_hundred.len(), 100);
 
-    let one_to_fifty = range(1, std::usize::MAX).take(50).collect::<Vec<usize>>();
+    let one_to_fifty = (1 .. std::usize::MAX).take(50).collect::<Vec<usize>>();
     assert!(one_to_fifty.len() == 50);
 }
 
@@ -706,7 +701,7 @@ fn type_inference_of_numbers_in_generics() {
             self.a * (one + one); // ; added just to allow to proceed.
 
             // So does this !
-            let two: T = Float::one() + <T as Float>::one();
+            let two: T = <T as Float>::one() + <T as Float>::one();
             self.a * two
         }
     }
@@ -752,23 +747,27 @@ fn into_iter() {
     iterate(vec!["foo".to_string()]);
 }
 
-fn generic_collect() {
-    use std::iter::IntoIterator;
+// Doesn't compile anymore:
+// tests/lang.rs:763:47: 763:60 error: type `[S]` does not implement any method in scope named `connect`
+// tests/lang.rs:763         s.into_iter().collect::<Vec<S>>()[..].connect(", ")
+// use std::slice::SliceConcatExt;
+// fn generic_collect() {
+//     use std::iter::IntoIterator;
 
-    fn connected<S, I>(s: I) -> String
-    where S: Str,
-          I: IntoIterator<Item=S> {
-        // have
-        s.into_iter().collect::<Vec<S>>().connect(", ")
+//     fn connected<S, I>(s: I) -> String
+//     where S: Str+Clone,
+//           I: IntoIterator<Item=S> {
+//         // have
+//         s.into_iter().collect::<Vec<S>>()[..].connect(", ")
         
-        // want
-        // s.into_iter().connect(", ")
-        // error: type `<I as core::iter::IntoIterator>::IntoIter` does not implement any method in scope named `connect`
-        // tests/lang.rs:790         s.into_iter().connect(", ")
-    }
+//         // want
+//         // s.into_iter().connect(", ")
+//         // error: type `<I as core::iter::IntoIterator>::IntoIter` does not implement any method in scope named `connect`
+//         // tests/lang.rs:790         s.into_iter().connect(", ")
+//     }
 
-    connected(&["foo", "bar"]);
-}
+//     connected(&["foo", "bar"]);
+// }
 
 #[test]
 fn pair_iterator_pattern() {
@@ -894,8 +893,8 @@ fn pair_trait_for_iteration() {
         let mut s = String::new();
         for pair in pairs {
             s = s
-                + pair.first_ref().as_slice()
-                + pair.second_ref().as_slice();
+                + pair.first_ref().as_ref()
+                + pair.second_ref().as_ref();
         }
         s
     }
@@ -930,7 +929,7 @@ fn serialize_json() {
     let encoded = json::encode(&object).unwrap();
 
     // Deserialize using `json::decode`
-    let decoded: TestStruct = json::decode(encoded.as_slice()).unwrap();
+    let decoded: TestStruct = json::decode(encoded.as_ref()).unwrap();
 }
 
 #[test]
@@ -1038,6 +1037,86 @@ fn chrono_time_conversion() {
 
 }
 
+#[test]
+fn refcell_and_borrow_mut() {
+    use std::cell::RefCell;
+    use std::borrow::BorrowMut;
+
+    struct Hub<C> {
+        client: RefCell<C>
+    }
+
+    impl<C> Hub<C> 
+        where C: BorrowMut<Client> {
+
+        fn new(client: C) -> Hub<C> {
+            Hub {
+                client: RefCell::new(client)
+            }
+        }
+
+        fn builder<'a>(&'a self) -> Builder<'a, C> {
+            Builder {
+                hub: self
+            }
+        }
+    }
+
+    struct Builder<'a, C: 'a> {
+        hub: &'a Hub<C>
+    }
+
+    impl<'a, C> Builder<'a, C>
+        where C: BorrowMut<Client> {
+        fn use_client(self) {
+            // 1: borrow_mut() of RefCell
+            // 2: borrow_mut() of BorrowMut()
+            // but doesn't work, as RefMut returned by 1) always yields RefCell
+            loop {
+                (*self.hub.client.borrow_mut()).borrow_mut().doit();
+                break;
+            }
+        }
+    }
+
+    struct Client;
+    impl Client {
+        fn doit(&mut self) {
+            println!("DID IT!!")
+        }
+    }
+
+
+    // HUB USAGE
+    {
+        let h = Hub::new(Client);
+        h.builder().use_client();
+    }
+
+    {
+        let mut c = Client;
+        let h = Hub::new(&mut c);
+        h.builder().use_client();
+    }
+}
+
+#[test]
+fn borrow_oddity() {
+    /// A utility type to perform a resumable upload from start to end.
+    struct Foo<'a> {
+        a: &'a u64,
+    }
+
+    impl<'a> Foo<'a> {
+        fn mutate_internal(&mut self) {}
+        
+        fn mutate(&mut self) {
+            self.mutate_internal();
+            self.mutate_internal();
+        }
+    }
+}
+
 // #[test]
 // http://stackoverflow.com/questions/28136739/variable-member-array-sizes-in-generic-types
 // fn test_generic_arrays() {
@@ -1047,3 +1126,15 @@ fn chrono_time_conversion() {
 //     }
 // }
 
+#[test]
+fn boxed_write_and_mutability() {
+    use std::io::{self, Write};
+    fn make_stream() -> Box<Write> {
+        Box::new(io::stdout())   
+    }
+    fn use_stream(stream: &mut Write) {
+        stream.write("Hello\n".as_bytes()).ok();
+    }
+
+    use_stream(&mut make_stream());
+}

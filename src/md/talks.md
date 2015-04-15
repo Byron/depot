@@ -1,5 +1,9 @@
 ## Rusty Snacks (Short useful vids about Rust)
 
+### Unit Assignments to debug types
+
+`let foo: () = something_complicate()`
+
 ### Borrow trait
 * How to use Borrow/BorrowMut to become indepent of whether something is borrowed or not in generic code.
 
@@ -21,6 +25,29 @@
 * implications: traits make types harder to use
 * you want traits though to make types easier to use in templates (to hide template parameters)
 
+
+## Daho.am
+
+### The Google Dialogs - generating REST-APIs for Rust
+
+TODO: details - daho.am pinged to see if there is demand.
+
+## Google-APIs-Rust - Dev Diary
+
+### Episode 1: Code Generation
+
+* authentication is THE prerequisite
+* learning from the best !
+* it's incredibly boring, error prone and time-consuming to implement a protocol by yourself
+* which generator to use ? (Show page about generators) Let's put it to the test
+  - gsl (f2ca8c3)
+  - pyratemp (c0bfeab)
+  - mako (30041e9)
+* types can get crazy ! (show type nesting)
+* json encoding: field renaming is a requirement ('type' fields and camelCase variable names)
+* about docs:
+  - `rustdoc` is great and makes awesome documentation possible.
+* it's always a gamble to update your compiler or any of your dependencies ([scotty quote](https://www.youtube.com/watch?v=jxzYTDX8bIg))
 
 ## Munich Gophers
 

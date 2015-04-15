@@ -1,25 +1,24 @@
 //! ## About Meee
 //! A simple program to help learning rust. It doesn't necessarily do anything useful.
 //! **Der Weg ist das Ziel**
-
+#![feature(exit_status)]
 #![allow(unstable)]
 extern crate mylib;
-
+extern crate rand;
 // This is a re-export that links to the public documentation automatically
 #[doc(no_inline)]
 pub use std::option::Option;
 
-use std::old_io;
-use std::os;
-use std::rand;
+use std::io::{self, Write, Read};
+use std::env;
 use std::cmp::Ordering;
 
 fn main() {
     let (mut x,mut y) = (0, 0);
-    let mut out = std::old_io::stderr();
+    let mut out = std::io::stderr();
 
     for _ in 0..2 {
-        out.write_line(format!("Hello, world: {}, {} !", x, y).as_slice()).ok().expect("Really have to print hello world");
+        writeln!(out, "Hello, world: {}, {} !", x, y).unwrap();
         x = mylib::add_one(x);
         y = mylib::add_two(y);
     }
@@ -36,11 +35,12 @@ fn main() {
     loop {
 
         print!("Guess a number between {} and {}\n$ ", MIN, MAX);
-        let guess = old_io::stdin().read_line().ok().expect("Need stdin to work");
+        let mut guess = String::new();
+        io::stdin().read_line(&mut guess).unwrap();
         let guess_trimmed = guess.trim();
         if guess_trimmed.len() == 0 {
-            out.write_str("Error: no guess made\n").ok();
-            os::set_exit_status(2);
+            out.write("Error: no guess made\n".as_bytes()).ok();
+            env::set_exit_status(2);
             return;
         }
         
@@ -48,8 +48,8 @@ fn main() {
         let guess_number = match guess_trimmed.parse::<u32>() {
             Ok(v) => v,
             Err(e) => { 
-                out.write_line(format!("Couldn't understand your number {:?}", guess_trimmed).as_slice()).ok();
-                os::set_exit_status(3);
+                writeln!(out, "Couldn't understand your number {:?}", guess_trimmed).ok();
+                env::set_exit_status(3);
                 return;
             }
         };
