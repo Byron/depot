@@ -1,11 +1,10 @@
 #![allow(dead_code, unused_variables, unused_assignments, deprecated)]
-#![feature(box_syntax, core, std_misc, slice_patterns)]
+#![feature(box_syntax, slice_patterns)]
 
 extern crate rustc_serialize;
 extern crate chrono;
 
 use std::fmt;
-use std::num::Float;
 use std::iter;
 
 static LONG_LIVED: &'static str = "foo";
@@ -117,9 +116,9 @@ fn enumerations() {
 fn strings() {
     let s = "Hi";             // This is a string slice
     // warning: use of deprecated item: use std::convert::AsRef<str> instead, #[warn(deprecated)] on by default
-    assert!(s.replace("Hi", "Ho").as_slice() == "Ho");
+    assert!(&s.replace("Hi", "Ho") == "Ho");
     // tests/lang.rs:120:35: 120:43 error: type annotations required: cannot resolve `collections::string::String : core::convert::AsRef<_>` [E0283]
-    // assert!(s.replace("Hi", "Ho").as_ref() == "Ho");
+    assert!(s.replace("Hi", "Ho") == "Ho");
 }
 
 #[test]
@@ -573,32 +572,6 @@ fn outspoken_from_stackoverflow() {
     }
 }
 
-#[test]
-fn type_alias() {
-    type MyFloat = f32;
-
-    // Constants cant have expression, even if they are known at compile time
-    // const FOO: MyFloat = <MyFloat as Float>::epsilon().sqrt();
-
-    let f: MyFloat = 2.0;
-    let mut x = f + 1.0 + <MyFloat as Float>::one();
-    x += 1.0;
-
-    struct Vector {
-        x: MyFloat,
-        y: MyFloat,
-        z: MyFloat
-    }
-
-    let v = Vector { x: 0.0, y: 1.0, z: 2.0 };
-
-    fn fun<T: Float>() -> T {
-        let one: T = Float::one();
-        let x = one + one + one + one + one; // now x is 5.0T
-        x
-    };
-}
-
 
 #[test]
 fn type_aliases() {
@@ -671,41 +644,6 @@ fn eq_on_float() {
     assert_eq!(PartialEqMyFloat{a:1.0}, PartialEqMyFloat{a:1.0});
 }
 
-#[test]
-fn type_inference_of_numbers_in_generics() {
-    use std::num::Float;
-
-    struct Foo<T> {
-        a: T,
-    }
-
-    impl<T: Float> Foo<T> {
-        fn twice(&self) -> T {
-            // self.a * 2.0
-                    // mismatched types:
-                    //  expected `T`,
-                    //     found `_`
-                    // (expected type parameter,
-                    //     found floating-point variable) [E0308]
-            // let one = Float::one();
-            // self.a * (one + one)
-                    // the type of this value must be known in this context
-                    // tests/lang.rs:696             self.a * (one + one)
-            // let two: T = Float::one() + Float::one();
-            // self.a * two
-                    // the type of this value must be known in this context
-                    // tests/lang.rs:699             let two: T = Float::one() + Float::one();
-
-            // This actually works !
-            let one: T = Float::one();
-            self.a * (one + one); // ; added just to allow to proceed.
-
-            // So does this !
-            let two: T = <T as Float>::one() + <T as Float>::one();
-            self.a * two
-        }
-    }
-}       
 
 #[test]
 fn traversing_tuples() {
