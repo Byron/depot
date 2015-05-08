@@ -49,6 +49,24 @@ TODO: details - daho.am pinged to see if there is demand.
   - `rustdoc` is great and makes awesome documentation possible.
 * it's always a gamble to update your compiler or any of your dependencies ([scotty quote](https://www.youtube.com/watch?v=jxzYTDX8bIg))
 
+### Episode 2: One CLI per API
+
+* how to ? impossible to do without code generation.
+    - pre-CLI: d1c5bf1
+* documentation: Which documentation system to use ? Mkdocs to the rescue (markdown to html with themes). Python preferred
+    - show online
+* build system: show how to extend build system to build any program type with minimal redundancy
+    - mkdoc generator works, CLI is included in build system: d1c9791
+* Argument Parsing: let's try to not deal with it, for now. -> docopts
+    - basic usage: 390354b
+* request structures: how to set request structures: use a cursor-based approach
+    - show structure in code/final docs
+    - explain cursor
+* compilation: if debug-compilation is pain, release is ... hell
+    - talk about it, maybe on camera
+
+.. last words, on camera
+
 ## Munich Gophers
 
 ### Event September 2014

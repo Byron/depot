@@ -1076,3 +1076,32 @@ fn boxed_write_and_mutability() {
 
     use_stream(&mut make_stream());
 }
+
+#[test]
+fn generic_iteration() {
+    struct Foo<'a> {
+        flag: Option<&'a str>
+    }
+
+    fn consumer<'a, T, I>(values: I) -> Option<&'a str> 
+        where       T: AsRef<str> + 'a,
+                    I: IntoIterator<Item=&'a T> {
+        for item in values {
+            return Some(item.as_ref());
+        }
+        None
+    }
+
+    let s = "string-val";
+    let values = vec![Foo { flag: Some(s) }];
+    let res = consumer(values.iter()
+                             .filter_map(|v| 
+                                 if let Some(ref f) = v.flag {Some(f)} else {None}
+                             ));
+    assert_eq!(res, Some(s));
+
+    // self.opts.values()
+    //                                      .filter_map(|v| 
+    //                                             if let Some(l) = v.long {Some(l)} else {None}
+    //                                       )
+}
