@@ -30,7 +30,7 @@ video_id=$(youtube3 videos insert \
 				tags=OSS \
 				category-id=28 \
 			..status \
-				privacy-status=private \
+				privacy-status=public \
 				embeddable=true \
 				license=youtube \
 			-p notify-subscribers=false \
@@ -67,7 +67,7 @@ youtube3 playlist-items insert \
 echo "Adding video '${video_id}' to GitHub issue ${issue} ..."
 gh is --repo ${repo} \
  		-c $"You can watch the development stream [on youtube](https://youtu.be/${video_id})
- 		
+
 [\![thumb](${thumbnail_url})](https://youtu.be/${video_id})" \
  		${issue}
 
