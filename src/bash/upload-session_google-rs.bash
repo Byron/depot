@@ -34,7 +34,7 @@ video_id=$(youtube3 videos insert \
 				embeddable=true \
 				license=youtube \
 			-p notify-subscribers=false \
-			-u simple "${video_path}" | tee last-${repo}-upload.json | jq -r .id)
+			-u resumable "${video_path}" | tee last-${repo}-upload.json | jq -r .id)
 
 if [[ -z ${video_id} ]]; then
 	echo "Upload failed !"
