@@ -29,6 +29,7 @@ video_id=$(youtube3 videos insert \
 				tags=diary \
 				tags=OSS \
 				category-id=28 \
+				default-language=en \
 			..status \
 				privacy-status=public \
 				embeddable=true \
