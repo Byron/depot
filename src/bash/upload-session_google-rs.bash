@@ -74,3 +74,9 @@ gh is --repo ${repo} \
  		${issue}
 
 echo "DONE"
+
+read -p "Do you want want to delete the 2 source files ? y/n [n]: " DELETE_SOURCES
+if [[ "${DELETE_SOURCES}" = y ]]; then
+	rm -v "${video_path}"
+	rm -v "${thumbnail}"
+fi
