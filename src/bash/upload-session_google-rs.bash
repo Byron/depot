@@ -68,7 +68,9 @@ echo "Adding video '${video_id}' to GitHub issue ${issue} ..."
 gh is --repo ${repo} \
  		-c $"You can watch the development stream [on youtube](https://youtu.be/${video_id}).
 
-[\![${title}](${thumbnail_url})](https://youtu.be/${video_id})" \
+*${title}*
+
+[\![thumb](${thumbnail_url})](https://youtu.be/${video_id})" \
  		${issue}
 
 echo "DONE"
