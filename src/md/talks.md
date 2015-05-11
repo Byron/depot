@@ -25,14 +25,7 @@
 * implications: traits make types harder to use
 * you want traits though to make types easier to use in templates (to hide template parameters)
 
-
-## Daho.am
-
-### The Google Dialogs - generating REST-APIs for Rust
-
-TODO: details - daho.am pinged to see if there is demand.
-
-## Google-APIs-Rust - Dev Diary
+## Google.rs - Dev Diary
 
 ### Episode 1: Code Generation
 
@@ -66,6 +59,68 @@ TODO: details - daho.am pinged to see if there is demand.
     - talk about it, maybe on camera
 
 .. last words, on camera
+
+### Episode 3: To make it work right !
+
+[pixellated screen] tell in camera that the youtube3 related tools improved workflow leading to better bandwidth 
+utilitzation and improved quality [depixellate screen]. Tout improved sound and higher production values 
+
+[Cut in Logo Animation and start voice-over in trailer-like quality] - Welcome to another episode of the Google.rs
+developer diary.
+
+"To make it work right"
+
+#### Rocking Blockers I
+"I don't know what the title wants to imply ! Even the release v0.1.0 is working alright, let me show you !!"
+[show screenshots/demos of problems]
+* Https Uploads are cached in memory ... " ... but this isn't a problem for files smaller than 2GB ... I can still do it "
+* Null values in meta-data are rejected by server "... DUH ! Damnit! "
+
+* [Voice in Background] "This made Byron very sad, seeing his work shattered like that ..."
+* [Voice] "... then angry" : "Memory Bug: You gonna be crushed"
+* Show how it's tracked down through hyper to `rust-openssl`. Show how issue is placed.
+* "Alright, next one: Null values !" [Show Byron thinking ... brabbling to finally ask for help on github]
+* "Nothing left to do here ... let's distract myself with ... usability" [on last word, faces camera, breaks third wall ;)]
+
+#### It's all about usability
+
+* first version wasn't quite there, with an argparser who couldn't tell more than just: syntax error. Show how difficult
+  usage is.
+* "I need something better ... " [slow affirmative clapping] " ... but what could it be ?!"
+* [slow cut to clap-rs github page]: "Right ... :)"
+* Show how appealing the project is thanks to its downright gorgeous documentation, and how nice the output looks.
+* **Step 1**: Naïve Implementation
+  * Show stack-based version, and stackoverflow
+  * show that there is no way to control the size of the main thread in Rust
+* **Step 2**: Put workload to compile-time
+  * Show what the problem (probably) is: App Structures requiring stack space
+  * Show how the data can be restructured to be more lightweight.
+  * Setup App at runtime
+* **Step 3**: 'Did you mean' and finishing touches
+  * Show that 'required parameter' information wasn't there
+  * Show using 'git' that Did-you-mean would be great
+  * Show how it is implemented
+    - for request values/paramters
+    - for clap-rs in general (subcommands, long flags)
+
+#### Rocking Blockers II
+
+It's still not working, let's see what happened in the meanwhile
+
+* Show that openssl issue was fixed ! Yeah
+* However, no reply from serde.
+  * "Erick, Whyyyyyy ?!?" [hold camera, dramatic why, break down to the ground, black out camera]
+  * [Fade in camera] "Ok, so I gotta do it myself then !!!"
+* **json-tools**
+  * "What would the simplest solution be ... hmm ... sure, a lexer, lexical-filter and serializer for json" 
+  * "Sounds like a great Idea, let's do it !" [show fingers going down on keyboard, pretending touch-typing, but doing eagle style]
+  * show in fast-forward style which parts are needed to do lexical level filtering
+  * ... and show final results
+* Now that it's done, show Erick's reply and how simple it could have been
+  * "Just a few days late ;) ... but hey, I will use both ways !"
+  * Show how json tools are used in the API, and the json::Value style in the CLI !
+
+TODO: Wrap it up, last words
 
 ## Munich Gophers
 
