@@ -1105,3 +1105,75 @@ fn generic_iteration() {
     //                                             if let Some(l) = v.long {Some(l)} else {None}
     //                                       )
 }
+
+
+#[test]
+fn enum_drill_down() {
+    use std::collections::BTreeMap;
+
+    enum Value {
+        Null,
+        Object(BTreeMap<String, Value>)
+    }
+
+    // fn set_null_to_how_i_want_it(fields: &[&str], mut v: &mut Value) {
+    //     debug_assert!(fields.len() > 0);
+
+    //     for (fid, field) in fields.iter().enumerate() {
+    //         v = 
+    //             match *v {
+    //                 Value::Object(ref mut map) => {
+    //                     let val_to_insert = 
+    //                         if fid == fields.len() - 1 {
+    //                             Value::Null
+    //                         } else {
+    //                             Value::Object(Default::default())
+    //                         };
+    //                     map.entry(field.to_string()).or_insert(val_to_insert)
+    //                 }
+    //                 _ => unreachable!(),
+    //             }
+    //     }
+    // }
+
+    fn set_null_how_borrow_chk_allows_it(fields: &[&str], v: &mut Value) {
+        let next = 
+            match *v {
+                Value::Object(ref mut map) => {
+                    let val_to_insert = 
+                        if fields.len() == 1 {
+                            Value::Null
+                        } else {
+                            Value::Object(Default::default())
+                        };
+                    map.entry(fields[0].to_string()).or_insert(val_to_insert)
+                },
+                _ => unreachable!()
+            };
+        if fields.len() > 1 {
+            set_null_how_borrow_chk_allows_it(&fields[1..], next)
+        }
+    }
+
+    let mut v = Value::Object(Default::default());
+    let fields = ["foo", "bar", "baz"];
+    set_null_how_borrow_chk_allows_it(&fields, &mut v);
+
+    let mut map_count = 0;
+    for (fid, field) in fields.iter().enumerate() {
+        let next = 
+            match v {
+                Value::Object(mut map) => {
+                    map_count += 1;
+                    map.remove(&field.to_string()).unwrap()
+                },
+                _ => unreachable!()
+            };
+        v = next;
+    }
+    assert_eq!(map_count, fields.len());
+    match v {
+        Value::Null => (),
+        Value::Object(_) => unreachable!(),
+    }
+}
