@@ -5,3 +5,4 @@ playlist_id=PLMHbQxe1e9MnoEcLhn6Yhv5KAvpWkJbL0
 default_repo=GitPython
 
 github_user=gitpython-developers
+privacy=public

@@ -5,3 +5,5 @@ playlist_id=PLMHbQxe1e9Mnnqj3Hs1hRDUXFEK-TgCnz
 default_repo=google-apis-rs
 
 github_user=Byron
+
+privacy=public
