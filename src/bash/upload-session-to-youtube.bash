@@ -93,7 +93,7 @@ youtube3 playlist-items insert \
 				channel-id=${channel_id} >/dev/null
 
 # Add issue comment
-if [[ -n ${repo} ]]; then
+if [[ ${repo} != NONE ]]; then
 	echo "Adding video '${video_id}' to GitHub issue ${issue} ..."
 	gh is --user ${github_user} --repo ${repo} \
  		-c $"You can watch the development stream [on youtube](https://youtu.be/${video_id}).
