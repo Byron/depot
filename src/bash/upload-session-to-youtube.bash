@@ -34,6 +34,8 @@ fi
 
 repo=${4-${default_repo}}
 
+github_user=${5-${github_user}}
+
 thumbnail="${video_path%.*}.jpg"
 video_basename="${video_path##*/}"
 title="${video_basename% - 1080p-web-HQ.*}"
