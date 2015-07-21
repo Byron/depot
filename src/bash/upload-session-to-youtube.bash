@@ -54,11 +54,6 @@ video_id=$(youtube3 videos insert \
 			-r snippet \
 				title="${title}" \
 				description="https://github.com/${github_user}/${repo}/issues/${issue}" \
-				tags="Google APIs" \
-				tags=Google \
-				tags=rust-lang \
-				tags=diary \
-				tags=OSS \
 				category-id=28 \
 			..status \
 				privacy-status=${privacy} \
