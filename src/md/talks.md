@@ -25,6 +25,19 @@
 * implications: traits make types harder to use
 * you want traits though to make types easier to use in templates (to hide template parameters)
 
+## try! for Iterator<Item=Result<T, E>> totally works
+* This is valid: `let bytes = try!(try!(File::open("file.txt")).bytes())`
+* It's the same as:
+```Rust
+let bytes = Vec::new();
+for byte_result in try!(File::open("file.txt")).bytes() {
+  match byte_result {
+    Ok(byte) => bytes.push(byte),
+    Err(err) => panic!("{}", err),
+  }
+}
+```
+
 ## Google.rs - Dev Diary
 
 ### Episode 1: Code Generation
@@ -62,8 +75,8 @@
 
 ### Episode 3: To make it work right !
 
-[pixellated screen] tell in camera that the youtube3 related tools improved workflow leading to better bandwidth 
-utilitzation and improved quality [depixellate screen]. Tout improved sound and higher production values 
+[pixellated screen] tell in camera that the youtube3 related tools improved workflow leading to better bandwidth
+utilitzation and improved quality [depixellate screen]. Tout improved sound and higher production values
 
 [Cut in Logo Animation and start voice-over in trailer-like quality] - Welcome to another episode of the Google.rs
 developer diary.
@@ -112,7 +125,7 @@ It's still not working, let's see what happened in the meanwhile
   * "Erick, Whyyyyyy ?!?" [hold camera, dramatic why, break down to the ground, black out camera]
   * [Fade in camera] "Ok, so I gotta do it myself then !!!"
 * **json-tools**
-  * "What would the simplest solution be ... hmm ... sure, a lexer, lexical-filter and serializer for json" 
+  * "What would the simplest solution be ... hmm ... sure, a lexer, lexical-filter and serializer for json"
   * "Sounds like a great Idea, let's do it !" [show fingers going down on keyboard, pretending touch-typing, but doing eagle style]
   * show in fast-forward style which parts are needed to do lexical level filtering
   * ... and show final results
@@ -162,7 +175,7 @@ Topics we touch will be:
  * Dependencies (see also [godepdency handling](https://code.google.com/p/go-wiki/wiki/PackageManagementTools))
  * Source-Deployment (tell about local dependency overrides)
  * Cross-Platform Deployment
- 
+
 * Primary Language Features
  * Safety
   * Access of Invalid Pointers (The Borrow-Checker)
@@ -210,4 +223,3 @@ Threading-Model | Native Threads (NT)       | Goroutines (on NT)       |
 * Themes
  * go: bluelover
  * rust: red ( or brunette, but is too dark)
-
