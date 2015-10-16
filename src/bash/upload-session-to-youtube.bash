@@ -69,7 +69,7 @@ fi
 
 # THUMBNAIL
 echo "Setting thumbnail for '${video_id}' ... "
-thumbnail_url=$(youtube3 thumbnails set $video_id \
+thumbnail_url=$(youtube3 thumbnails set "$video_id" \
 			    -u simple "${thumbnail}" | jq -r ".items[0].medium.url")
 
 if [[ -z ${thumbnail_url} ]]; then
@@ -85,7 +85,7 @@ youtube3 playlist-items insert \
 			channel-id=${channel_id} \
 			playlist-id=${playlist_id} \
 			resource-id \
-				video-id=${video_id} \
+				video-id="${video_id}" \
 				kind="youtube#video" \
 				channel-id=${channel_id} >/dev/null
 
