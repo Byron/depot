@@ -27,6 +27,19 @@
 
 ## try! for Iterator<Item=Result<T, E>> totally works
 * This is valid: `let bytes = try!(try!(File::open("file.txt")).bytes())`
+* Actually, it only works where `FromIterator` is used:
+```Rust
+use std::fs::File;
+use std::io::{self, Read};
+fn main() {
+    fn to_vec() -> Result<Vec<u8>, io::Error>{
+      let bytes = try!(File::open("Cargo.toml")).bytes();
+      Ok(try!(bytes.collect()))
+    }
+    print!("{:?}", to_vec());
+}
+```
+
 * It's the same as:
 ```Rust
 let bytes = Vec::new();
