@@ -1,5 +1,27 @@
 # Languages
 
+## CoffeeScript
+
+### Pro
+* less verbose, densely packed version of javascript
+* syntactic sugar for everything
+* saves a lot of development time, even though there is
+  added complexity
+
+### Con
+* initially it's easy to have it generate unintended code by failing to put
+  parentheses in the right places
+* additional structure might sometimes be preferred to make structure more
+  easily graspable.
+* it's easy to forget to use `=>` when callbacks are passed from instance
+  methods.
+* you will not get named functions, which won't help debugging a lot.
+* transpiler tends to produce inefficient code for some cases of destructuring. It knows no context.
+* when working with classes/this-based objects, it's very easy to forget to use => wherever a callback is used.
+  And that even though the added readability is desirable.
+
+###
+
 ## C++
 
 ### Pro
