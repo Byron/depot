@@ -90,6 +90,23 @@
     + `x = append(x, elm, ...)` is quite cumbersome. Even though it makes sense and has more applications, it's the most inconvenient form of append I have encountered so far.
     - There is no max/min for `int` types for instance. These are easily implemented, but due to the missing generics, these kind of standard functions will have to be implemented over and over again unless there is some community library to do fill the gap.
 
+## Go 1.6 Reevaluation
+
+### Pro
+* All source is considered UTF-8, works even for symbols, except for the first character of a symbol, which must be ascii
+* Compiler can choose to put structs on the stack, just leave it to him to make that decision, and you are god
+* still: nice c-ish, functional style .... but nothing else expected anyway (only slices and maps can be typed dynamically, using compiler magic)
+* **actually** you can use multiple return values ... maybe err destructuring is the only thing that is special
+* straight-forward, but possibly hard to read standard function syntax. All the same keywords are used over an over again.
+
+### Cons
+* project setup is still cumbersome, and needs the GOPATH to be set, and installations need cryptic `go get ./...` and `go install ./...`
+* explicit return, always, makes closures more cumbersome
+* still no standard for vendoring, it's not super straightforward to setup a project as you need to put it into the required project structure
+
+
+### Notes
+* one directory equals to one package. Each package can have exactly one main.go
 
 
 ### Interesting
