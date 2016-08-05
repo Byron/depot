@@ -35,7 +35,10 @@
 		* *container components* usually use `connect` to bind state and callbacks
 		  to a respective presentational component right away.
 		* *middleware* can be used to make new actions pass through custom handlers.
+			This works by patching `dispatch` of the redux store, and allowing middle
+			wares to call each other.
 		  They can change the flow of events in every which way, and read the state.
+			It's called like `middleWare(dispatch, getState)`.
 		* You should try to maximize decoupling, to the point where your props
 		  are the only thing that's needed. Use `connect` to facilitate binding.
 		* If `connect` doesn't depend on redux state, don't provide a
