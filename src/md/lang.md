@@ -46,6 +46,7 @@
 * It doesn't implement its own GC, but uses the [BoehmGC](http://www.hboehm.info/gc/) - 
   it's totally conceivable to statically link it to make binaries more portable. It's just
   135kb after all.
+* built-in benchmarking tools
   
 ### Con
 * *(maybe)* Binaries need a crystal installation, as they link to some specific libraries that *may* not be present on systems by default (*to be verified*) - compare to `Go`, which has no dependencies at all.
@@ -55,6 +56,10 @@
 * No fully-fledged package manager just yet, but `shards` is already there (seems early though).
 * No debugging support just yet.
 * No destructuring and matching, it seems.
+* No doc tests - will eventually lead to out-of-date examples or no examples at all
+  (except for specs)
+* For now, only single-threaded operation (*no parallelism*), but supports concurrency
+  through *fibers*.
 
 ### Notes
 * Interesting: Type inference can't determine type of array by what you push into it.
