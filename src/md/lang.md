@@ -1,5 +1,73 @@
 # Languages
 
+## Crystal
+
+### Pro
+
+* A single binary to do it all: `crystal`
+  * build [`--release`]
+  * run
+  * test publish
+  * format
+  * introspection (types, context, everything !!!)
+* Huge standard library, *batteries included*
+  * Binaries are small and only contain what's needed (80kb for a 'hello world')
+* Very nice, ruby-like syntax, and generally dedicated to take what Ruby does right
+* It's FAST out of the box. Recursive fibonaci beats what comes out of Rust by 60% ... just like that.
+* Low memory footprint, generally
+* *Fibers* are Crystal's version of a co-routine. A light-weight routine to run asynchronously. *Channels* are used to let them communicate.
+* [Crystals shard repository](crystalshards.xyz) is already up and running ! It's like `crates.io`.
+* [awesome crystal](https://github.com/veelenga/awesome-crystal) for a curated list of shards.
+* 💗 Powerful meta-programming, deeply embedded into the syntax tree. Allows to program with types, generating code branches based on properties of said type. Syntax is easy to understand, and not cryptic like the one of *Rust* for instance.
+* 💗  Cross-compilation is simple: Produce an `.o` file, and then use the target-systems
+  C compiler to link it into a program. *Note:* The main goal of this is to get the compiler
+  to the target platform, to allow compiling on that system. Probably this makes it somewhat
+  prohobitive for smaller systems, but that's OK (Rust would be more useful there).
+* 💗 It even allows for ruby-like `program` syntax !
+* It's a GC'd language, but the authors' are fully aware and provide compile-time constructs to reduce pressure.
+* `*varargs` (as tuple) and `**namedargs` (as named tuple), including splat to unpack.
+* There is a real `Union` type and *union syntax* (like `String|Int32`).
+* Maybe I mentioned it, but the syntax is really optimized to be looking good. It probably is inherited by Ruby, where it matters.
+* Fast moving, thanks to small team of dedicated people who know what they are doing.
+* external names for functions (like `add(base, by amount) { base + amount }` and called 
+  like `add 1, by: 5` to yield `6`)
+* Nice time handling: `plan begin: Time.now, end: 2.days.from_now`
+* Some support for `private` methods and functions, to controll what goes into modules or
+  is callable.
+* Support for *interfaces* (called abstract classes, i.e. `abstract class Foo`)
+* `abstract` also works for methods in modules, which assures those `include`ing them have to implement them as well.
+* flexible module system allowing to `include` and `extend` other modules, types and instances with.
+* Support for stack-allocated `struct` types. They are passed by value, and allow nice
+  optimizations previously unseen in dynamically-looking languages.
+* Blocks are expressions (like in Ruby/Rust)
+* Easy integration with C ... it appears at least.
+* Standard library provides methods that throw, and those that don't - the latter
+  is generally faster, and might even be easier to work with.
+* It doesn't implement its own GC, but uses the [BoehmGC](http://www.hboehm.info/gc/) - 
+  it's totally conceivable to statically link it to make binaries more portable. It's just
+  135kb after all.
+  
+### Con
+* *(maybe)* Binaries need a crystal installation, as they link to some specific libraries that *may* not be present on systems by default (*to be verified*) - compare to `Go`, which has no dependencies at all.
+* **compiler** errors are not as helpful as they should be. Compare to *Elm* or even *Rust*
+* Looking at the [benchmarks](https://github.com/kostya/crystal-benchmarks-game), memory seems to go very high sometimes ... . Maybe GC is too lazy ?
+* Still early in development, v0.18.0 was reviewed, so everything could happen. Not backed by bigger companies yet, it seems.
+* No fully-fledged package manager just yet, but `shards` is already there (seems early though).
+* No debugging support just yet.
+* No destructuring and matching, it seems.
+
+### Notes
+* Interesting: Type inference can't determine type of array by what you push into it.
+- *No windows support just yet*
+- *An exception based language, thanks to ruby heritage*. As [claimed](https://crystal-lang.org/docs/syntax_and_semantics/exception_handling.html)
+  it is the preferred way of error handling.
+- They refer to `self` even to refer to the type of self (see `Self` in case of Rust,
+  which seems more natural).
+* It uses single uppercase letters to indicate generic type parameters (i.e. `T`), which
+  might actually be nice syntactically.
+* I believe to keep them simple, Generics are instantiated when used. However, the error
+  messages produces are quite good to understand.
+
 ## CoffeeScript
 
 ### Pro
