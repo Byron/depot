@@ -47,6 +47,8 @@
   it's totally conceivable to statically link it to make binaries more portable. It's just
   135kb after all.
 * built-in benchmarking tools
+* 💗 No chance for receiving Nil unknowningly, as types who can be Nil will always be `X | Nil`, which
+  forces you to deal with it, either using `do_it x if x.is_a? X` or with `x.try { |x| do_it x }`
   
 ### Con
 * *(maybe)* Binaries need a crystal installation, as they link to some specific libraries that *may* not be present on systems by default (*to be verified*) - compare to `Go`, which has no dependencies at all.
