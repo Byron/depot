@@ -1,0 +1,13 @@
+
+.hidden-text section.stack.present {
+  visibility: hidden;
+}
+
+.reveal iframe {
+  width: 1280px;
+  height: 600px;
+}
+
+section h1 {
+  background-color: hsla(44,87%,89%,0.49);
+}
