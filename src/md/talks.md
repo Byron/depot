@@ -1,3 +1,22 @@
+## Hello Crystal !
+### Preamble
+* I suck as a programmer
+* and here is why
+* *(show off add(a, b) in JS)*
+  * *(there is no protection, as the only real protection NOT at runtime)*
+* It's a conflict, because I know,yet I ought to be best in class
+* There are programming languages which solve that
+  * Show Haskell, Lisp, OCaml
+  * Show an Alien
+* Hello Rust
+  * Safety First, then performance !
+  * *(show add in Rust playground)*
+  * 
+* A garbage-collected Rust
+
+### About Crystal *(in the playground)*
+* 
+
 ## Rusty Snacks (Short useful vids about Rust)
 
 ### Unit Assignments to debug types
