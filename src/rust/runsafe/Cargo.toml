@@ -1,8 +1,4 @@
 [package]
-name = "calendar"
+name = "runsafe"
 version = "0.1.0"
 authors = ["Sebastian Thiel <byronimo@gmail.com>"]
-
-[dependencies]
-chrono = "*"
-itertools = "*"

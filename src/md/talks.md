@@ -1,3 +1,6 @@
+## CodeTalks Live Coding
+* Copy files with CLI and a logical progression of things, TDD
+
 ## Hello Crystal !
 ### Preamble
 * I suck as a programmer
